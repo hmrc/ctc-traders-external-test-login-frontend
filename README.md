@@ -1,5 +1,5 @@
 
-# external-test-login-frontend
+# ctc-traders-external-test-login-frontend
 
 ## Starting the service locally
 
@@ -9,7 +9,7 @@ Run it using the included shell script:
 
 This should start this service and any dependent services.
 
-Once the script has finished, the service will be available on: http://localhost:19154/external-test-login-frontend/create
+Once the script has finished, the service will be available on: http://localhost:19154/ctc-traders-external-test-login-frontend/create
 
 ## Running tests
 

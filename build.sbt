@@ -3,7 +3,7 @@ import sbt.{Def, ThisBuild}
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
-lazy val appName: String = "external-test-login-frontend"
+lazy val appName: String = "ctc-traders-external-test-login-frontend"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
