@@ -17,8 +17,8 @@
 package services
 
 import connectors.ApiPlatformTestUserConnector
-import models.UserTypes.{INDIVIDUAL, ORGANISATION, UserType}
-import models.{Service, TestIndividual, TestOrganisation, TestUser}
+import models.UserTypes.{ORGANISATION, UserType}
+import models.{Service, TestIndividual, TestUser}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

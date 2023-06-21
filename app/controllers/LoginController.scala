@@ -75,7 +75,7 @@ class LoginController @Inject() (
         }
 
       loginForm.bindFromRequest.fold(
-        formWithErrors => badRequest(),
+        _ => badRequest(),
         loginForm => if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest()
       )
   }

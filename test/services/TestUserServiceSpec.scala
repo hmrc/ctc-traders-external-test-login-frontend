@@ -18,8 +18,8 @@ package services
 
 import connectors.ApiPlatformTestUserConnector
 import helpers.AsyncHmrcSpec
-import models.{Field, Service, TestIndividual, TestOrganisation}
 import models.UserTypes.{AGENT, INDIVIDUAL, ORGANISATION}
+import models.{Field, Service, TestIndividual}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global

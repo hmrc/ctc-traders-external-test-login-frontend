@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import views.html.govuk_wrapper
 @import controllers.routes.LoginController
 
 @this(govUkWrapper: govuk_wrapper)
 
-@(continue: String, errorMessage: Option[String] = None, userId: Option[String] = None, password: Option[String] = None)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(continue: String, errorMessage: Option[String] = None, userId: Option[String] = None, password: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @govUkWrapper(pageTitle = Some("Sign in")) {
   <fieldset class="govuk-fieldset">

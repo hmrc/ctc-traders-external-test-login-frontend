@@ -17,14 +17,13 @@
 @import models.FieldDefinitions
 @import models.UserTypes.{INDIVIDUAL, ORGANISATION}
 @import views.html.govuk_wrapper
-@import config.FrontendAppConfig
 @import models.Service
 @import views.html.includes._
 
 
 @this(govUkWrapper: govuk_wrapper)
 
-@()(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@()(implicit request: Request[_], messages: Messages)
 
 @govUkWrapper(pageTitle = Some("Create a CTC test user - HMRC External Test - GOV.UK")) {
     <h1 class="govuk-heading-xl">Common Transit Convention - NCTS</h1>

@@ -36,13 +36,11 @@ class LoginServiceSpec extends AsyncHmrcSpec with BeforeAndAfterAll {
     val underTest                    = new LoginService(apiPlatformTestUserConnector)
   }
 
-  override def beforeAll() {
+  override def beforeAll(): Unit =
     setCurrentMillisFixed(10000)
-  }
 
-  override def afterAll() {
+  override def afterAll(): Unit =
     setCurrentMillisSystem()
-  }
 
   "login" should {
     "return the session when the authentication is successful" in new Setup {

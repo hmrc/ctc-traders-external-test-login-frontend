@@ -28,12 +28,12 @@ trait WiremockSugar extends BeforeAndAfterEach {
   val wireMockUrl    = s"http://$stubHost:$stubPort"
   val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     wireMockServer.start()
     WireMock.configureFor(stubHost, stubPort)
   }
 
-  override def afterEach() {
+  override def afterEach(): Unit = {
     wireMockServer.stop()
     wireMockServer.resetMappings()
   }
