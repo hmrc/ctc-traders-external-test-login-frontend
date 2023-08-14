@@ -21,11 +21,11 @@
 
 @(continue: String, errorMessage: Option[String] = None, userId: Option[String] = None, password: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@govUkWrapper(pageTitle = Some("Sign in")) {
+@govUkWrapper(pageTitle = Some("Sign in to test NCTS Phase 5 - Manage your transit movements - GOV.UK")) {
   <fieldset class="govuk-fieldset">
     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
       <h1 class="govuk-fieldset__heading">
-        Sign in
+          Sign in to test NCTS Phase 5
       </h1>
     </legend>
     <!-- Error Summary -->
@@ -43,7 +43,8 @@
         </div>
       </div>
     }
-    <p class="govuk-body">Enter your Test User credentials to sign in.</p>
+    <p class="govuk-body">Enter your test user details to sign in to the NCTS sandbox.</p>
+
     <div id="apiTestLoginInputs" class="govuk-form-group @if(errorMessage.isDefined) {govuk-form-group--error}">
       @helper.form(action = LoginController.login()) {
         @errorMessage.map { error =>
@@ -66,6 +67,11 @@
           <input class="govuk-input govuk-!-width-one-half" id="password" name="password" type="password" aria-required="true" value="@{password}" required>
         </div>
       </div>
+
+      <p class="govuk-body">
+          If you have lost or forgotten your details, <a class="govuk-link" href="/ncts-p5-sandbox/test-user">create a new test user.</a>
+      </p>
+
       <button id="submit" class="govuk-button" data-module="govuk-button" type="submit">
         Sign in
       </button>
