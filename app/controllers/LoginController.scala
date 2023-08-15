@@ -22,6 +22,7 @@ import handlers.ErrorHandler
 import models.{LoginFailed, LoginRequest}
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.Messages
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
 import services.{ContinueUrlService, LoginService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
@@ -70,15 +71,18 @@ class LoginController @Inject() (
           session =>
             Redirect(loginForm.continue).withSession(session)
         } recover {
-          case e: LoginFailed =>
+          case _: LoginFailed =>
             Unauthorized(loginView(loginForm.continue, Some("Invalid user ID or password. Try again.")))
         }
 
       loginForm.bindFromRequest.fold(
-        _ => badRequest(),
-        loginForm => if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest()
+        errorForm => badRequest(errorForm.errors.head.message),
+        loginForm =>
+          if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest("Invalid user ID or password. Try again.")
       )
   }
 
-  private def badRequest()(implicit request: Request[AnyContent]) = successful(BadRequest(errorHandler.standardErrorTemplate("", "", "Invalid Parameters")))
+  private def badRequest(msg: String)(implicit request: Request[AnyContent], messages: Messages) =
+    successful(BadRequest(loginView(appConfig.continueUrl, Some(msg))))
+  //successful(BadRequest(errorHandler.standardErrorTemplate("", "", "Invalid Parameters")))
 }
