@@ -25,7 +25,7 @@
 
 @(user: TestUser)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-@url = { @{config.host}/ctc-traders-external-test-login-frontend/sign-in/creds?userId=@{user.userId}&password=@{user.password} }
+@url = { @{config.host}/ncts-p5-sandbox/sign-in/creds?userId=@{user.userId}&password=@{user.password} }
 
 @govUkWrapper(pageTitle = Some("Your test user for NCTS Phase 5 - Manage your transit movements - GOV.UK")) {
   <h1 class="govuk-heading-xl">Your test user for NCTS Phase 5</h1>
