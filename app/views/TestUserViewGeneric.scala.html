@@ -25,30 +25,29 @@
 
 @(user: TestUser)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
-@url = { @{config.host}/ncts-p5-sandbox/sign-in/creds?userId=@{user.userId}&password=@{user.password} }
+@url = { @{config.host}/ncts-p5-sandbox/sign-in/creds }
 
-@govUkWrapper(pageTitle = Some("Your test user for NCTS Phase 5 - Manage your transit movements - GOV.UK")) {
-  <h1 class="govuk-heading-xl">Your test user for NCTS Phase 5</h1>
+@govUkWrapper(pageTitle = Some(messages("testUser.title"))) {
+  <h1 class="govuk-heading-xl">@messages("testUser.heading")</h1>
 
   <p class="govuk-body">
-      Use these details to sign in to the NCTS sandbox:
+      @messages("testUser.heading.p1")
   </p>
 
   <ul class="govuk-list govuk-list--bullet govuk-list--no-style">
     @field(Field("userid", "User ID", user.userId))
     @field(Field("password", "Password", user.password))
-    <!-- @user.fields.map(f => field(f)) -->
   </ul>
 
   <p class="govuk-body">
-      You can reuse your test user so take note of these details and keep them somewhere secure.
+      @messages("testUser.heading.p2")
   </p>
 
   <p class="govuk-body">
-      Your test user will only work with the NCTS sandbox - you cannot use it on the live service on Gov.uk.
+      @messages("testUser.heading.p3")
   </p>
 
   <p class="govuk-body">
-      <a class="govuk-button" target="_blank" href=@{url}>Sign in</a>
+      <a class="govuk-button" target="_blank" href=@{url}>@messages("testUser.heading.button")</a>
   </p>
 }

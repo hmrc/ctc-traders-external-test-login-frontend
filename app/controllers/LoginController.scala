@@ -22,7 +22,6 @@ import handlers.ErrorHandler
 import models.{LoginFailed, LoginRequest}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
 import services.{ContinueUrlService, LoginService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
@@ -59,9 +58,9 @@ class LoginController @Inject() (
       successful(Ok(loginView(appConfig.continueUrl)))
   }
 
-  def showLoginPageWithCreds(userId: String, password: String) = Action.async {
+  def showLoginPageWithCreds() = Action.async {
     implicit request =>
-      successful(Ok(loginView(appConfig.continueUrl, None, Some(userId), Some(password))))
+      successful(Ok(loginView(appConfig.continueUrl, None)))
   }
 
   def login() = Action.async {
@@ -71,18 +70,15 @@ class LoginController @Inject() (
           session =>
             Redirect(loginForm.continue).withSession(session)
         } recover {
-          case _: LoginFailed =>
+          case e: LoginFailed =>
             Unauthorized(loginView(loginForm.continue, Some("Invalid user ID or password. Try again.")))
         }
 
       loginForm.bindFromRequest.fold(
-        errorForm => badRequest(errorForm.errors.head.message),
-        loginForm =>
-          if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest("Invalid user ID or password. Try again.")
+        _ => badRequest(),
+        loginForm => if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest()
       )
   }
 
-  private def badRequest(msg: String)(implicit request: Request[AnyContent], messages: Messages) =
-    successful(BadRequest(loginView(appConfig.continueUrl, Some(msg))))
-  //successful(BadRequest(errorHandler.standardErrorTemplate("", "", "Invalid Parameters")))
+  private def badRequest()(implicit request: Request[AnyContent]) = successful(BadRequest(errorHandler.standardErrorTemplate("", "", "Invalid Parameters")))
 }

@@ -25,22 +25,22 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govUkWrapper(pageTitle = Some("Create a test user for NCTS Phase 5 - Manage your transit movements - GOV.UK")) {
-    <h1 class="govuk-heading-xl">Create a test user for NCTS Phase 5</h1>
+@govUkWrapper(pageTitle = Some(messages("createTestUser.title"))) {
+    <h1 class="govuk-heading-xl">@messages("createTestUser.heading")</h1>
     <p class="govuk-body">
-        To test NCTS Phase 5, you need to create a user for our sandbox.
+        @messages("createTestUser.p1")
     </p>
     <p class="govuk-body">
-        The NCTS sandbox is a test version of NCTS. It looks just like the live service but it is for testing purposes only. Just you and the other testers can see it.
+        @messages("createTestUser.p2")
     </p>
     <p class="govuk-body">
-        This means any declarations or notifications you make in the sandbox are mock transit forms - they will not be sent to the customs office.
-    </p>
-
-    <p class="govuk-body">
-        If you already have a test user, <a class="govuk-link" target="_blank" href="/ncts-p5-sandbox/sign-in">sign in here</a>
+        @messages("createTestUser.p3")
     </p>
 
-    <a class="govuk-button" target="_blank" href="/ncts-p5-sandbox/test-user">create a test user</a>
+    <p class="govuk-body">
+        @messages("createTestUser.already.link.1") <a class="govuk-link" target="_blank" href="/ncts-p5-sandbox/sign-in">@messages("createTestUser.already.link.2")</a>.
+    </p>
+
+    <a class="govuk-button" target="_blank" href="/ncts-p5-sandbox/test-user">@messages("createTestUser.button")</a>
 
 }

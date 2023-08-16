@@ -26,13 +26,14 @@ import models.{Field, FieldDefinition, Service, TestOrganisation, UserTypes}
 import org.jsoup.nodes.Document
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.TestUserService
 import views.html.{CreateTestUserViewGeneric, TestUserViewGeneric}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.jdk.CollectionConverters._
 
@@ -88,25 +89,36 @@ class TestUserControllerSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite with
 
   "showCreateTestUser" should {
     "display the Create test user page" in new Setup {
-      val result = execute(underTest.showCreateUserPageGeneric())
-      val page   = contentAsString(result)
+      val result: Future[Result] = execute(underTest.showCreateUserPageGeneric())
+      val page: String           = contentAsString(result)
 
-      page should include("Common Transit Convention")
-      page should include("You can create a test user to manage movements in the sandbox environment")
-      page should include("If you already have a test user you can login to CTC")
-
-      // TODO add more coverage
+      page should include("Create a test user for NCTS Phase 5")
+      page should include("To test NCTS Phase 5, you need to create a user for our sandbox.")
+      page should include(
+        "The NCTS sandbox is a test version of NCTS. It looks just like the live service but it is for testing purposes only. Just you and the other testers can see it."
+      )
+      page should include(
+        "This means any declarations or notifications you make in the sandbox are mock transit forms - they will not be sent to the customs office."
+      )
+      page should include("If you already have a test user")
+      page should include("sign in here")
     }
   }
 
-  "createOrg" should {
+  "createUserGeneric" should {
 
-    "create an organisation" in new Setup {
+    "create an test user" in new Setup {
       val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("serviceSelection", "common-transit-convention-traders"))
 
       val result = execute(underTest.createUserGeneric(), request)
 
-      contentAsString(result) should include(organisation.userId)
+      contentAsString(result) should include("Your test user for NCTS Phase 5")
+      contentAsString(result) should include("Use these details to sign in to the NCTS sandbox:")
+      contentAsString(result) should include("User ID")
+      contentAsString(result) should include("Password")
+      contentAsString(result) should include("You can reuse your test user so take note of these details and keep them somewhere secure.")
+      contentAsString(result) should include("Your test user will only work with the NCTS sandbox - you cannot use it on the live service on Gov.uk.")
+      contentAsString(result) should include("Sign in")
     }
   }
 }

@@ -1,4 +1,5 @@
-service.name = ctc-traders-external-test-login-frontend
+service.name = NCTS Phase 5 sandbox
+service.homePageUrl = /ncts-p5-sandbox/create-test-user
 
 site.back = Back
 site.remove = Remove
@@ -11,47 +12,28 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 
-date.day = Day
-date.month = Month
-date.year = Year
-
-timeout.title = You’re about to be signed out
-timeout.message = For security reasons, you will be signed out of this service in
-timeout.keepAlive = Stay signed in
-timeout.signOut = Sign out
-
 error.browser.title.prefix = Error:
-error.boolean = Please give an answer
-error.invalid_date = Give a correct date
-error.date.day_blank = Enter a day
-error.date.day_invalid = Give a correct day using numbers 1 to 31
-error.date.month_blank = Enter a month
-error.date.month_invalid = Give a correct month using numbers 1 to 12
-error.date.year_blank = Enter a year
-error.date.year_invalid = Give a correct year
-error.integer = Give an answer in whole numbers
-error.non_numeric = Give a value using only numbers
-error.number = Please enter a valid number
-error.required = Please enter a value
-error.summary.title = There is a problem
 
-index.title = ctc-traders-external-test-login-frontend
-index.heading = ctc-traders-external-test-login-frontend
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
+createTestUser.title = Create a test user for NCTS Phase 5 - Manage your transit movements - GOV.UK
+createTestUser.heading = Create a test user for NCTS Phase 5
+createTestUser.p1 = To test NCTS Phase 5, you need to create a user for our sandbox.
+createTestUser.p2 = The NCTS sandbox is a test version of NCTS. It looks just like the live service but it is for testing purposes only. Just you and the other testers can see it.
+createTestUser.p3 = This means any declarations or notifications you make in the sandbox are mock transit forms - they will not be sent to the customs office.
+createTestUser.already.link.1 = If you already have a test user,
+createTestUser.already.link.2 = sign in here
+createTestUser.button = Create test user
 
-checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check Your Answers
+testUser.title = Your test user for NCTS Phase 5 - Manage your transit movements - GOV.UK
+testUser.heading = Your test user for NCTS Phase 5
+testUser.heading.p1 = Use these details to sign in to the NCTS sandbox:
+testUser.heading.p2 = You can reuse your test user so take note of these details and keep them somewhere secure.
+testUser.heading.p3 = Your test user will only work with the NCTS sandbox - you cannot use it on the live service on Gov.uk.
+testUser.heading.button = Sign in
 
-journeyRecovery.continue.title = Sorry, there is a problem with the service
-journeyRecovery.continue.heading = Sorry, there is a problem with the service
-journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
-journeyRecovery.startAgain.title = Sorry, there is a problem with the service
-journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
-journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
-
-signedOut.title = For your security, we signed you out
-signedOut.heading = For your security, we signed you out
-signedOut.guidance = We did not save your answers.
-
-unauthorised.title = You can’t access this service with this account
-unauthorised.heading = You can’t access this service with this account
+login.title = Sign in to test NCTS Phase 5 - Manage your transit movements - GOV.UK
+login.heading = Sign in to test NCTS Phase 5
+login.p1 = Enter your test user details to sign in to the NCTS sandbox.
+login.p2 = If you have lost or forgotten your details,
+login.link = create a new test user
+login.button = Sign in
+login.error = There is a problem
