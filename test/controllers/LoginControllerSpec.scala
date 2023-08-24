@@ -61,15 +61,12 @@ class LoginControllerSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
 
       val result = execute(underTest.showLoginPage())
 
-      contentAsString(result) should include("Sign in")
-    }
-
-    "display the login page when user id and password provided" in new Setup {
-
-      when(continueUrlService.isValidContinueUrl(*)).thenReturn(true)
-
-      val result = execute(underTest.showLoginPageWithCreds("foo", "bar"))
-
+      contentAsString(result) should include("Sign in to test NCTS Phase 5")
+      contentAsString(result) should include("Enter your test user details to sign in to the NCTS sandbox.")
+      contentAsString(result) should include("User ID")
+      contentAsString(result) should include("Password")
+      contentAsString(result) should include("If you have lost or forgotten your details")
+      contentAsString(result) should include("create a new test user")
       contentAsString(result) should include("Sign in")
     }
   }

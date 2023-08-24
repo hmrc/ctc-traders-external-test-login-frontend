@@ -58,11 +58,6 @@ class LoginController @Inject() (
       successful(Ok(loginView(appConfig.continueUrl)))
   }
 
-  def showLoginPageWithCreds(userId: String, password: String) = Action.async {
-    implicit request =>
-      successful(Ok(loginView(appConfig.continueUrl, None, Some(userId), Some(password))))
-  }
-
   def login() = Action.async {
     implicit request =>
       def handleLogin(loginForm: LoginForm) =
