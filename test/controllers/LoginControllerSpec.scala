@@ -27,6 +27,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{ContinueUrlService, LoginService}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import views.html.LoginView
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,13 +40,14 @@ class LoginControllerSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
     implicit val materializer = app.injector.instanceOf[Materializer]
     private val csrfAddToken  = app.injector.instanceOf[play.filters.csrf.CSRFAddToken]
 
-    val messagesApi: MessagesApi               = app.injector.instanceOf[MessagesApi]
-    val loginService: LoginService             = mock[LoginService]
-    val continueUrlService: ContinueUrlService = mock[ContinueUrlService]
-    implicit val appConfig: FrontendAppConfig  = app.injector.instanceOf[FrontendAppConfig]
-    val errorHandler: ErrorHandler             = app.injector.instanceOf[ErrorHandler]
-    val mcc                                    = app.injector.instanceOf[MessagesControllerComponents]
-    val loginView                              = app.injector.instanceOf[LoginView]
+    val messagesApi: MessagesApi                = app.injector.instanceOf[MessagesApi]
+    val loginService: LoginService              = mock[LoginService]
+    val continueUrlService: ContinueUrlService  = mock[ContinueUrlService]
+    implicit val appConfig: FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
+    implicit val servicesConfig: ServicesConfig = app.injector.instanceOf[ServicesConfig]
+    val errorHandler: ErrorHandler              = app.injector.instanceOf[ErrorHandler]
+    val mcc                                     = app.injector.instanceOf[MessagesControllerComponents]
+    val loginView                               = app.injector.instanceOf[LoginView]
 
     val underTest = new LoginController(loginService, errorHandler, continueUrlService, mcc, loginView)
 
