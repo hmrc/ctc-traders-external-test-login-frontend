@@ -21,21 +21,17 @@ import models._
 import play.api.http.Status.{CREATED, OK}
 import play.api.http.{HeaderNames, Status}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiPlatformTestUserConnector @Inject() (
-  proxiedHttpClient: ProxiedHttpClient,
+  httpClient: HttpClient,
   servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
   private val serviceKey = "api-platform-test-user"
-
-  private val bearerToken = servicesConfig.getConfString(s"$serviceKey.bearer-token", "")
-
-  private val httpClient = proxiedHttpClient.withAuthorization(bearerToken)
 
   val serviceUrl: String = {
     val context = servicesConfig.getConfString(s"$serviceKey.context", "")
