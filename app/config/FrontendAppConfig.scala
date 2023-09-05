@@ -24,7 +24,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val host: String             = configuration.get[String]("host")
   val appName: String          = configuration.get[String]("appName")
-  val timeout: Int             = configuration.get[Int]("timeout-dialog.timeout")
   lazy val serviceKey: String  = configuration.get[String]("service-name")
   lazy val continueUrl: String = configuration.get[String]("continue-url")
 }
