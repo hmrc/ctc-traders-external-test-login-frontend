@@ -27,7 +27,7 @@ import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -46,7 +46,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
     implicit val hc = HeaderCarrier()
 
     val underTest = new ApiPlatformTestUserConnector(
-      app.injector.instanceOf[ProxiedHttpClient],
+      app.injector.instanceOf[HttpClient],
       app.injector.instanceOf[ServicesConfig]
     ) {
       override val serviceUrl: String = wireMockUrl
