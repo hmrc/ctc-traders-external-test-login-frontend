@@ -16,12 +16,10 @@
 
 package connectors
 
-import config.FrontendAppConfig
 import models.JsonFormatters._
 import models._
 import play.api.http.Status.{CREATED, OK}
 import play.api.http.{HeaderNames, Status}
-import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -31,9 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ApiPlatformTestUserConnector @Inject() (
   proxiedHttpClient: ProxiedHttpClient,
-  appConfig: FrontendAppConfig,
-  configuration: Configuration,
-  environment: Environment,
   servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
   private val serviceKey = "api-platform-test-user"

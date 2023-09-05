@@ -17,14 +17,13 @@
 package services
 
 import config.FrontendAppConfig
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ContinueUrlService @Inject() (appConfig: FrontendAppConfig, servicesConfig: ServicesConfig) {
+class ContinueUrlService @Inject() (appConfig: FrontendAppConfig) {
 
-  private lazy val continueUrl = s"${servicesConfig.baseUrl("manage-transit-movements-frontend")}/${appConfig.continueUrl}"
+  private lazy val continueUrl = appConfig.continueUrl
 
   def isValidContinueUrl(url: String): Boolean = {
     val strippedUrl = stripQueryParameters(url)

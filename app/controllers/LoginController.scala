@@ -24,7 +24,6 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
 import services.{ContinueUrlService, LoginService}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.LoginView
@@ -40,7 +39,7 @@ class LoginController @Inject() (
   continueUrlService: ContinueUrlService,
   mcc: MessagesControllerComponents,
   loginView: LoginView
-)(implicit val mat: Materializer, val appConfig: FrontendAppConfig, val servicesConfig: ServicesConfig, val ec: ExecutionContext)
+)(implicit val mat: Materializer, val appConfig: FrontendAppConfig, val ec: ExecutionContext)
     extends FrontendController(mcc)
     with WithUnsafeDefaultFormBinding {
 
@@ -56,8 +55,7 @@ class LoginController @Inject() (
 
   def showLoginPage() = Action.async {
     implicit request =>
-      val url: String = s"${servicesConfig.baseUrl("manage-transit-movements-frontend")}/${appConfig.continueUrl}"
-      successful(Ok(loginView(url)))
+      successful(Ok(loginView(appConfig.continueUrl)))
   }
 
   def login() = Action.async {

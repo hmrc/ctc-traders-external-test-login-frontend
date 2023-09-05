@@ -17,19 +17,18 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import config.FrontendAppConfig
 import helpers.{AsyncHmrcSpec, WiremockSugar}
-import models.{AuthenticatedSession, Field, LoginFailed, LoginRequest, Service, UserTypes}
+import models.JsonFormatters._
+import models._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.http.HeaderNames.{AUTHORIZATION, LOCATION}
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.{Application, Configuration, Environment}
+import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import models.JsonFormatters._
-import play.api.http.HeaderNames.{AUTHORIZATION, LOCATION}
-import play.api.libs.json.Json.toJson
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -48,9 +47,6 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
 
     val underTest = new ApiPlatformTestUserConnector(
       app.injector.instanceOf[ProxiedHttpClient],
-      app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[Configuration],
-      app.injector.instanceOf[Environment],
       app.injector.instanceOf[ServicesConfig]
     ) {
       override val serviceUrl: String = wireMockUrl
