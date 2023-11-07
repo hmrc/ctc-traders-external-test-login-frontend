@@ -19,11 +19,10 @@
 
 @import views.html.field
 @import views.html.govuk_wrapper
-@import config.FrontendAppConfig
 
 @this(govUkWrapper: govuk_wrapper)
 
-@(user: TestUser)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(user: TestUser)(implicit request: Request[_], messages: Messages)
 
 @url = { /ncts-p5-sandbox/sign-in/ }
 

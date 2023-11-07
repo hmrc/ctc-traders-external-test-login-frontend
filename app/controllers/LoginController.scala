@@ -69,10 +69,12 @@ class LoginController @Inject() (
             Unauthorized(loginView(loginForm.continue, Some("Invalid user ID or password. Try again.")))
         }
 
-      loginForm.bindFromRequest.fold(
-        _ => badRequest(),
-        loginForm => if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest()
-      )
+      loginForm
+        .bindFromRequest()
+        .fold(
+          _ => badRequest(),
+          loginForm => if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest()
+        )
   }
 
   private def badRequest()(implicit request: Request[AnyContent]) = successful(BadRequest(errorHandler.standardErrorTemplate("", "", "Invalid Parameters")))
