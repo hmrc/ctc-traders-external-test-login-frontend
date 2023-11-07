@@ -1,6 +1,4 @@
-$govuk-assets-path: "/ncts-p5-sandbox/assets/lib/govuk-frontend/govuk/assets/";
-$hmrc-assets-path: "/ncts-p5-sandbox/assets/lib/hmrc-frontend/hmrc/";
+@import "lib/govuk-frontend/govuk/base";
 
-@import "lib/govuk-frontend/govuk/all";
-@import "lib/hmrc-frontend/hmrc/all";
 @import "ad-hoc";
+@import "application";

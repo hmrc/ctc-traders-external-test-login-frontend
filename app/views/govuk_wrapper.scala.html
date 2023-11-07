@@ -19,44 +19,40 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.{Footer, FooterItem}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 
 @this(
-        govukLayout: GovukLayout,
-        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet
+    hmrcStandardPage: HmrcStandardPage
 )
 @(
-        pageTitle: Option[String] = None,
-        headBlock: Option[Html] = None,
-        headerBlock: Option[Html] = None,
-        beforeContentBlock: Option[Html] = None,
-        footerBlock: Option[Html] = None,
-        footerItems: Seq[FooterItem] = Seq.empty,
-        bodyEndBlock: Option[Html] = None,
-        scriptsBlock: Option[Html] = None
-)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+    pageTitle: Option[String] = None
+)(content: Html)(implicit request: Request[_], messages: Messages)
 
 @head = {
-    <link href='@controllers.routes.Assets.versioned("stylesheets/main.css")' media="screen" rel="stylesheet" type="text/css" />
-    @hmrcTrackingConsentSnippet()
+    <link href='@controllers.routes.Assets.versioned("stylesheets/main.css")' media="all" rel="stylesheet" type="text/css" @{CSPNonce.attr} />
 }
 
 @scripts = {
-    <script @CSPNonce.attr src='@routes.Assets.versioned("javascripts/feedback.js")'></script>
-    <script @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
-    <script @CSPNonce.attr>window.GOVUKFrontend.initAll();</script>
+    <script src='@controllers.routes.Assets.versioned("javascripts/application.min.js")' @{CSPNonce.attr}></script>
 }
 
-@content = {
-    @contentBlock
-}
-
-
-@govukLayout(
-    pageTitle = pageTitle,
-    headBlock = Some(head),
-    beforeContentBlock = None,
-    bodyEndBlock = None,
-    scriptsBlock = Some(scripts),
-    headerBlock = None,
-    footerBlock = None
+@hmrcStandardPage(
+    HmrcStandardPageParams(
+        serviceURLs = ServiceURLs(
+            serviceUrl = None,
+            signOutUrl = None
+        ),
+        banners = Banners(
+            phaseBanner = None,
+            userResearchBanner = None
+        ),
+        templateOverrides = TemplateOverrides(
+            additionalHeadBlock = Some(head),
+            additionalScriptsBlock = Some(scripts)
+        ),
+        pageTitle = pageTitle,
+        serviceName = Some(messages("service.name")),
+        backLink = None
+    )
 )(content)
