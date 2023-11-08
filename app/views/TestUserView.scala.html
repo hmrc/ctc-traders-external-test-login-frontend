@@ -17,36 +17,36 @@
 @import models.TestUser
 @import models.Field
 
-@import views.html.field
+@import views.html.{field, govuk_wrapper}
 @import views.html.govuk_wrapper
+@import views.html.includes
 
-@this(govUkWrapper: govuk_wrapper)
+@this(
+    govUkWrapper: govuk_wrapper,
+    formHelper: FormWithCSRF,
+    button: includes.Button
+)
 
 @(user: TestUser)(implicit request: Request[_], messages: Messages)
 
-@url = { /ncts-p5-sandbox/sign-in/ }
-
 @govUkWrapper(pageTitle = Some(messages("testUser.title"))) {
-  <h1 class="govuk-heading-xl">@messages("testUser.heading")</h1>
 
-  <p class="govuk-body">
-      @messages("testUser.heading.p1")
-  </p>
+    @formHelper(action = routes.TestUserController.onSubmit(), Symbol("autoComplete") -> "off") {
+        <h1 class="govuk-heading-xl">@messages("testUser.heading")</h1>
 
-  <ul class="govuk-list govuk-list--bullet govuk-list--no-style">
-    @field(Field("userid", "User ID", user.userId))
-    @field(Field("password", "Password", user.password))
-  </ul>
+        <p class="govuk-body">
+            @messages("testUser.p1")
+        </p>
 
-  <p class="govuk-body">
-      @messages("testUser.heading.p2")
-  </p>
+        <ul class="govuk-list govuk-list--bullet govuk-list--no-style">
+            @field(Field("userid", "User ID", user.userId))
+            @field(Field("password", "Password", user.password))
+        </ul>
 
-  <p class="govuk-body">
-      @messages("testUser.heading.p3")
-  </p>
+        <p class="govuk-body">
+            @messages("testUser.p2")
+        </p>
 
-  <p class="govuk-body">
-      <a class="govuk-button" target="_blank" href=@{url}>@messages("testUser.heading.button")</a>
-  </p>
+        @button("testUser.button", Map("formtarget" -> "_blank"))
+    }
 }

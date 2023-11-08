@@ -14,8 +14,26 @@
  * limitations under the License.
  */
 
-package models
+package controllers
 
-case class AuthenticatedSession(authBearerToken: String, authorityURI: String, gatewayToken: String, affinityGroup: String)
+import base.SpecBase
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 
-case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
+class RedirectControllerSpec extends SpecBase {
+
+  private lazy val redirectRoute = routes.RedirectController.redirect().url
+
+  "RedirectController" - {
+
+    "must redirect to the next page" in {
+      val request = FakeRequest(GET, redirectRoute)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustBe routes.CreateTestUserController.onPageLoad().url
+    }
+  }
+}

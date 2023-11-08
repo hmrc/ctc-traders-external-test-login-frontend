@@ -17,16 +17,31 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    govUkErrorSummary: GovukErrorSummary
+    govukInput: GovukInput
 )
 
-@(errors: Seq[FormError])(implicit messages: Messages)
+@(
+    field: play.api.data.Field,
+    labelKey: String,
+    id: String = "",
+    inputType: String = "text"
+)(implicit messages: Messages)
 
-@if(errors.nonEmpty) {
-    @govUkErrorSummary(
-        ErrorSummary(
-            errorList = errors.asTextErrorLinks,
-            title = Text(messages("error.summary.title"))
-        )
+@input = @{
+    Input(
+        id = id,
+        errorMessage = field.error.map { e =>
+            ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
+        },
+        spellcheck = Some(false),
+        classes = "govuk-!-width-one-half",
+        label = Label(
+            isPageHeading = false,
+            content = Text(messages(labelKey))
+        ),
+        inputType = inputType
     )
+    .withFormField(field)
 }
+
+@govukInput(input)

@@ -14,33 +14,40 @@
  * limitations under the License.
  *@
 
+@import controllers.routes
 @import models.FieldDefinitions
 @import models.UserTypes.{INDIVIDUAL, ORGANISATION}
 @import views.html.govuk_wrapper
 @import models.Service
+@import views.html.includes
 @import views.html.includes._
 
-
-@this(govUkWrapper: govuk_wrapper)
+@this(
+    govUkWrapper: govuk_wrapper,
+    formHelper: FormWithCSRF,
+    button: includes.Button
+)
 
 @()(implicit request: Request[_], messages: Messages)
 
 @govUkWrapper(pageTitle = Some(messages("createTestUser.title"))) {
-    <h1 class="govuk-heading-xl">@messages("createTestUser.heading")</h1>
-    <p class="govuk-body">
-        @messages("createTestUser.p1")
-    </p>
-    <p class="govuk-body">
-        @messages("createTestUser.p2")
-    </p>
-    <p class="govuk-body">
-        @messages("createTestUser.p3")
-    </p>
 
-    <p class="govuk-body">
-        @messages("createTestUser.already.link.1") <a class="govuk-link" target="_blank" href="/ncts-p5-sandbox/sign-in">@messages("createTestUser.already.link.2")</a>.
-    </p>
+    @formHelper(action = routes.CreateTestUserController.onSubmit(), Symbol("autoComplete") -> "off") {
+        <h1 class="govuk-heading-xl">@messages("createTestUser.heading")</h1>
+        <p class="govuk-body">
+            @messages("createTestUser.p1")
+        </p>
+        <p class="govuk-body">
+            @messages("createTestUser.p2")
+        </p>
+        <p class="govuk-body">
+            @messages("createTestUser.p3")
+        </p>
 
-    <a class="govuk-button" target="_blank" href="/ncts-p5-sandbox/test-user">@messages("createTestUser.button")</a>
+        <p class="govuk-body">
+            @messages("createTestUser.already.link.1") <a class="govuk-link" href="@routes.LoginController.onPageLoad()">@messages("createTestUser.already.link.2")</a>.
+        </p>
 
+        @button("createTestUser.button")
+    }
 }

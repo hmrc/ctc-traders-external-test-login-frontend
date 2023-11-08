@@ -39,8 +39,8 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
       .configure(("metrics.jvm", false))
       .build()
 
-  private val loginRequest = LoginRequest("user", "password")
-  private val loginPayload = Json.toJson(LoginRequest("user", "password")).toString
+  private val login        = Login("user", "password")
+  private val loginPayload = Json.toJson(login).toString
 
   trait Setup {
     implicit val hc = HeaderCarrier()
@@ -169,7 +169,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      val result = await(underTest.authenticate(loginRequest))
+      val result = await(underTest.authenticate(login))
 
       result shouldBe AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
     }
@@ -177,7 +177,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
     "fail with LoginFailed when the credentials are not valid" in new Setup {
       stubFor(
         post(urlEqualTo("/session"))
-          .withRequestBody(equalToJson(toJson(loginRequest).toString()))
+          .withRequestBody(equalToJson(toJson(login).toString()))
           .willReturn(
             aResponse()
               .withStatus(UNAUTHORIZED)
@@ -185,7 +185,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
       )
 
       intercept[LoginFailed] {
-        await(underTest.authenticate(loginRequest))
+        await(underTest.authenticate(login))
       }
     }
 
@@ -200,7 +200,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
       )
 
       intercept[UpstreamErrorResponse] {
-        await(underTest.authenticate(loginRequest))
+        await(underTest.authenticate(login))
       }.statusCode shouldBe INTERNAL_SERVER_ERROR
     }
 

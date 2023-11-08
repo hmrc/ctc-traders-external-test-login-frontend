@@ -67,8 +67,8 @@ class ApiPlatformTestUserConnector @Inject() (
       case _ => throw new RuntimeException(s"Unexpected response")
     }
 
-  def authenticate(loginRequest: LoginRequest)(implicit hc: HeaderCarrier): Future[AuthenticatedSession] =
-    httpClient.POST[LoginRequest, Either[UpstreamErrorResponse, HttpResponse]](s"$serviceUrl/session", loginRequest) map {
+  def authenticate(login: Login)(implicit hc: HeaderCarrier): Future[AuthenticatedSession] =
+    httpClient.POST[Login, Either[UpstreamErrorResponse, HttpResponse]](s"$serviceUrl/session", login) map {
       case Right(response) =>
         val authenticationResponse = response.json.as[AuthenticationResponse]
 
@@ -83,7 +83,7 @@ class ApiPlatformTestUserConnector @Inject() (
           case _ => throw new RuntimeException("Authorization and Location headers must be present in response")
         }
 
-      case Left(UpstreamErrorResponse(_, Status.UNAUTHORIZED, _, _)) => throw LoginFailed(loginRequest.username)
+      case Left(UpstreamErrorResponse(_, Status.UNAUTHORIZED, _, _)) => throw LoginFailed(login.userId)
       case Left(err)                                                 => throw err
     }
 

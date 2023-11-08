@@ -26,16 +26,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TestUserService @Inject() (apiPlatformTestUserConnector: ApiPlatformTestUserConnector)(implicit ec: ExecutionContext) {
 
-  def services(implicit hc: HeaderCarrier): Future[Seq[Service]] = apiPlatformTestUserConnector.getServices()
-
   def createUser(selectedService: String)(implicit hc: HeaderCarrier): Future[TestUser] =
     for {
       services <- apiPlatformTestUserConnector.getServices()
-      testUser <- createUserWithServices(
-        services.filter(
-          x => x.key == selectedService
-        )
-      )
+      testUser <- createUserWithServices(services.filter(_.key == selectedService))
     } yield testUser
 
   private def createUserWithServices(services: Seq[Service])(implicit hc: HeaderCarrier): Future[TestIndividual] =
@@ -43,10 +37,6 @@ class TestUserService @Inject() (apiPlatformTestUserConnector: ApiPlatformTestUs
 
   private def serviceKeysForUserType(userType: UserType, services: Seq[Service]): Seq[String] =
     services
-      .filter(
-        s => s.allowedUserTypes.contains(userType)
-      )
-      .map(
-        s => s.key
-      )
+      .filter(_.allowedUserTypes.contains(userType))
+      .map(_.key)
 }

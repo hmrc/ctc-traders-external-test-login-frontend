@@ -16,6 +16,15 @@
 
 package models
 
-case class AuthenticatedSession(authBearerToken: String, authorityURI: String, gatewayToken: String, affinityGroup: String)
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{__, Writes}
 
-case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
+case class Login(userId: String, password: String)
+
+object Login {
+
+  implicit val writes: Writes[Login] = (
+    (__ \ "username").write[String] and
+      (__ \ "password").write[String]
+  )(unlift(Login.unapply))
+}

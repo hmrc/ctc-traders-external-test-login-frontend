@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package services
 
-case class AuthenticatedSession(authBearerToken: String, authorityURI: String, gatewayToken: String, affinityGroup: String)
+import org.joda.time.DateTime
 
-case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
+class DateTimeService {
+
+  def now: DateTime = DateTime.now
+
+}

@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-case class AuthenticatedSession(authBearerToken: String, authorityURI: String, gatewayToken: String, affinityGroup: String)
+import forms.mappings.Mappings
+import models.Login
+import play.api.data.Form
 
-case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
+import javax.inject.Inject
+
+class LoginFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Login] =
+    Form(
+      "value" -> login(
+        key => s"login.$key.error.required"
+      )
+    )
+}

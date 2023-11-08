@@ -16,19 +16,10 @@
 
 package services
 
-import config.FrontendAppConfig
+import java.util.UUID
 
-import javax.inject.{Inject, Singleton}
+class UUIDService {
 
-@Singleton
-class ContinueUrlService @Inject() (appConfig: FrontendAppConfig) {
+  def randomUUID: UUID = UUID.randomUUID
 
-  private lazy val continueUrl = appConfig.continueUrl
-
-  def isValidContinueUrl(url: String): Boolean = {
-    val strippedUrl = stripQueryParameters(url)
-    strippedUrl == continueUrl
-  }
-
-  private def stripQueryParameters(url: String) = url.split('?')(0)
 }

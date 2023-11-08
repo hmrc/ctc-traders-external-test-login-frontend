@@ -40,7 +40,7 @@
 @hmrcStandardPage(
     HmrcStandardPageParams(
         serviceURLs = ServiceURLs(
-            serviceUrl = None,
+            serviceUrl = Some(controllers.routes.TestUserController.onPageLoad().url),
             signOutUrl = None
         ),
         banners = Banners(

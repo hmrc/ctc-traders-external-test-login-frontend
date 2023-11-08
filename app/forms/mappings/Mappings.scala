@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package forms.mappings
 
-case class AuthenticatedSession(authBearerToken: String, authorityURI: String, gatewayToken: String, affinityGroup: String)
+import models.Login
+import play.api.data.FieldMapping
+import play.api.data.Forms.of
 
-case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
+trait Mappings extends Formatters {
+
+  protected def login(requiredKey: String => String, args: Any*): FieldMapping[Login] =
+    of(loginFormatter(requiredKey, args))
+
+}

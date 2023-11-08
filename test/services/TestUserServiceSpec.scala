@@ -16,16 +16,20 @@
 
 package services
 
+import base.SpecBase
 import connectors.ApiPlatformTestUserConnector
-import helpers.AsyncHmrcSpec
 import models.UserTypes.{AGENT, INDIVIDUAL, ORGANISATION}
 import models.{Field, Service, TestIndividual}
-import uk.gov.hmrc.http.HeaderCarrier
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
-class TestUserServiceSpec extends AsyncHmrcSpec {
+class TestUserServiceSpec extends SpecBase {
+
+  private lazy val mockApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
   private val service1 = "service1"
   private val service2 = "service2"
@@ -39,26 +43,36 @@ class TestUserServiceSpec extends AsyncHmrcSpec {
     Service(service4, "Service 4", Seq(AGENT))
   )
 
-  trait Setup {
-    implicit val hc                      = HeaderCarrier()
-    val mockApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-    val underTest                        = new TestUserService(mockApiPlatformTestUserConnector)
+  override protected def applicationBuilder(): GuiceApplicationBuilder =
+    super
+      .applicationBuilder()
+      .overrides(
+        bind[ApiPlatformTestUserConnector].toInstance(mockApiPlatformTestUserConnector)
+      )
 
-    when(mockApiPlatformTestUserConnector.getServices()(*)).thenReturn(successful(services))
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockApiPlatformTestUserConnector)
   }
 
-  "createUser" should {
-    "return a generated organisation when type is ORGANISATION" in new Setup {
-      val organisation = TestIndividual("org-user",
-                                        "org-password",
-                                        Seq(Field("saUtr", "Self Assessment UTR", "1555369053"))
-      ) // TODO - why does this only work  with TestIndividual?
+  "TestUserService" - {
 
-      when(mockApiPlatformTestUserConnector.createOrg(eqTo(Seq(service3)))(*)).thenReturn(successful(organisation))
+    "createUser" - {
+      "should return a generated organisation when type is ORGANISATION" in {
+        // TODO - why does this only work with TestIndividual?
+        val organisation = TestIndividual("org-user", "org-password", Seq(Field("saUtr", "Self Assessment UTR", "1555369053")))
 
-      val result = await(underTest.createUser("service3"))
+        when(mockApiPlatformTestUserConnector.getServices()(any())).thenReturn(successful(services))
+        when(mockApiPlatformTestUserConnector.createOrg(any())(any())).thenReturn(successful(organisation))
 
-      result shouldBe organisation
+        val service = app.injector.instanceOf[TestUserService]
+
+        val result = service.createUser(service3)
+
+        result.futureValue mustBe organisation
+
+        verify(mockApiPlatformTestUserConnector).createOrg(eqTo(Seq(service3)))(any())
+      }
     }
   }
 

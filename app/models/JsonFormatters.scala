@@ -52,6 +52,5 @@ object JsonFormatters {
     .and[TestOrganisation](ORGANISATION.toString)
     .format
 
-  implicit val formatLoginRequest           = Json.format[LoginRequest]
   implicit val formatAuthenticationResponse = Json.format[AuthenticationResponse]
 }
