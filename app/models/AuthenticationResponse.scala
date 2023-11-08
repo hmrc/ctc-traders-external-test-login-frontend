@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, Reads}
 
 case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
 
 object AuthenticationResponse {
-  implicit val format: Format[AuthenticationResponse] = Json.format[AuthenticationResponse]
+  implicit val reads: Reads[AuthenticationResponse] = Json.format[AuthenticationResponse]
 }
