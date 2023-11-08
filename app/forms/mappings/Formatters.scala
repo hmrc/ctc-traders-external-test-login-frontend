@@ -53,7 +53,7 @@ trait Formatters {
 
     override def unbind(key: String, value: Login): Map[String, String] =
       Map(
-        "userId"   -> value.userId,
+        "userId"   -> value.username,
         "password" -> value.password
       )
   }

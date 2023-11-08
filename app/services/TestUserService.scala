@@ -17,26 +17,14 @@
 package services
 
 import connectors.ApiPlatformTestUserConnector
-import models.UserTypes.{ORGANISATION, UserType}
-import models.{Service, TestIndividual, TestUser}
+import models.TestUser
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class TestUserService @Inject() (apiPlatformTestUserConnector: ApiPlatformTestUserConnector)(implicit ec: ExecutionContext) {
+class TestUserService @Inject() (apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
-  def createUser(selectedService: String)(implicit hc: HeaderCarrier): Future[TestUser] =
-    for {
-      services <- apiPlatformTestUserConnector.getServices()
-      testUser <- createUserWithServices(services.filter(_.key == selectedService))
-    } yield testUser
-
-  private def createUserWithServices(services: Seq[Service])(implicit hc: HeaderCarrier): Future[TestIndividual] =
-    apiPlatformTestUserConnector.createOrg(serviceKeysForUserType(ORGANISATION, services))
-
-  private def serviceKeysForUserType(userType: UserType, services: Seq[Service]): Seq[String] =
-    services
-      .filter(_.allowedUserTypes.contains(userType))
-      .map(_.key)
+  def createUser(enrolments: Seq[String])(implicit hc: HeaderCarrier): Future[TestUser] =
+    apiPlatformTestUserConnector.createTestUser(enrolments)
 }

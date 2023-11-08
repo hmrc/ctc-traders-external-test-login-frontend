@@ -39,7 +39,7 @@ class TestUserController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>
-      testUserService.createUser(config.serviceKey) map (
+      testUserService.createUser(config.services) map (
         user => Ok(view(user))
       )
   }

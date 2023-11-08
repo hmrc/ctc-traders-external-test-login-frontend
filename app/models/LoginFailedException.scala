@@ -16,6 +16,4 @@
 
 package models
 
-import models.UserTypes.UserType
-
-case class Service(key: String, name: String, allowedUserTypes: Seq[UserType])
+case class LoginFailedException(userId: String) extends Exception

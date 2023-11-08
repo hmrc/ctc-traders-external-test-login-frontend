@@ -15,8 +15,6 @@
  *@
 
 @import models.TestUser
-@import models.Field
-
 @import views.html.{field, govuk_wrapper}
 @import views.html.govuk_wrapper
 @import views.html.includes
@@ -39,8 +37,8 @@
         </p>
 
         <ul class="govuk-list govuk-list--bullet govuk-list--no-style">
-            @field(Field("userid", "User ID", user.userId))
-            @field(Field("password", "Password", user.password))
+            @field("userid", "User ID", user.userId)
+            @field("password", "Password", user.password)
         </ul>
 
         <p class="govuk-body">

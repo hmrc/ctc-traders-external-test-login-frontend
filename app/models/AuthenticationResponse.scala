@@ -16,6 +16,10 @@
 
 package models
 
-case class AuthenticatedSession(authBearerToken: String, authorityURI: String, gatewayToken: String, affinityGroup: String)
+import play.api.libs.json.{Format, Json}
 
 case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
+
+object AuthenticationResponse {
+  implicit val format: Format[AuthenticationResponse] = Json.format[AuthenticationResponse]
+}

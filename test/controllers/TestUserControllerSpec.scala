@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import models.TestIndividual
+import models.TestUser
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{mock, reset, when}
 import play.api.inject.bind
@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class TestUserControllerSpec extends SpecBase {
 
-  private val testUser = TestIndividual("userId", "password", Nil)
+  private val testUser = TestUser("userId", "password")
 
   private lazy val testUserRoute = routes.TestUserController.onPageLoad().url
 

@@ -16,15 +16,11 @@
 
 package models
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{__, Writes}
+import play.api.libs.json.{Json, Writes}
 
-case class Login(userId: String, password: String)
+case class Login(username: String, password: String)
 
 object Login {
 
-  implicit val writes: Writes[Login] = (
-    (__ \ "username").write[String] and
-      (__ \ "password").write[String]
-  )(unlift(Login.unapply))
+  implicit val writes: Writes[Login] = Json.writes[Login]
 }

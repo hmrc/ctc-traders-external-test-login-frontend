@@ -16,10 +16,10 @@
 
 package connectors
 
-import models.JsonFormatters._
 import models._
-import play.api.http.Status.{CREATED, OK}
+import play.api.http.Status.CREATED
 import play.api.http.{HeaderNames, Status}
+import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -43,29 +43,19 @@ class ApiPlatformTestUserConnector @Inject() (
     }
   }
 
-  // TODO - why does this have to be a TestIndividual and not a TestOrganisation?
-  def createOrg(enrolments: Seq[String])(implicit hc: HeaderCarrier): Future[TestIndividual] = {
-    val payload = CreateUserRequest(enrolments)
-
-    post(s"$serviceUrl/organisations", payload) map {
+  def createTestUser(enrolments: Seq[String])(implicit hc: HeaderCarrier): Future[TestUser] = {
+    val writes: Writes[Seq[String]] = Writes(
+      x => Json.obj("serviceNames" -> x)
+    )
+    httpClient.POST[Seq[String], HttpResponse](s"$serviceUrl/organisations", enrolments)(writes, implicitly, implicitly, implicitly).map {
       response =>
         response.status match {
           case CREATED =>
-            response.json.as[TestIndividual]
+            response.json.as[TestUser]
           case _ => throw new RuntimeException(s"Unexpected response code=${response.status} message=${response.body}")
         }
     }
   }
-
-  def getServices()(implicit hc: HeaderCarrier): Future[Seq[Service]] =
-    httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](s"$serviceUrl/services") map {
-      case Right(response) if response.status == OK => response.json.as[Seq[Service]]
-      case Right(response) =>
-        throw new RuntimeException(s"Unexpected response code=${response.status} message=${response.body}")
-      case Left(UpstreamErrorResponse(body, status, _, _)) =>
-        throw new RuntimeException(s"Unexpected response code=$status message=$body")
-      case _ => throw new RuntimeException(s"Unexpected response")
-    }
 
   def authenticate(login: Login)(implicit hc: HeaderCarrier): Future[AuthenticatedSession] =
     httpClient.POST[Login, Either[UpstreamErrorResponse, HttpResponse]](s"$serviceUrl/session", login) map {
@@ -83,10 +73,7 @@ class ApiPlatformTestUserConnector @Inject() (
           case _ => throw new RuntimeException("Authorization and Location headers must be present in response")
         }
 
-      case Left(UpstreamErrorResponse(_, Status.UNAUTHORIZED, _, _)) => throw LoginFailed(login.userId)
+      case Left(UpstreamErrorResponse(_, Status.UNAUTHORIZED, _, _)) => throw LoginFailedException(login.username)
       case Left(err)                                                 => throw err
     }
-
-  private def post(url: String, payload: CreateUserRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[CreateUserRequest, HttpResponse](url, payload, Seq("Content-Type" -> "application/json"))
 }

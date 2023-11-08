@@ -18,7 +18,6 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helpers.{AsyncHmrcSpec, WiremockSugar}
-import models.JsonFormatters._
 import models._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -55,7 +54,6 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
 
   "createOrg" should {
     "return a generated organisation" in new Setup {
-      private val saUtr    = "1555369052"
       private val userId   = "user"
       private val password = "password"
 
@@ -93,11 +91,10 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      val result = await(underTest.createOrg(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
+      val result = await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
 
       result.userId shouldBe userId
       result.password shouldBe password
-      result.fields should contain(Field("eoriNumber", "Economic Operator Registration and Identification (EORI) number", saUtr))
     }
 
     "fail when api-platform-test-user returns a response that is not 201 CREATED" in new Setup {
@@ -109,44 +106,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      intercept[RuntimeException](await(underTest.createOrg(Seq("national-insurance", "self-assessment", "mtd-income-tax"))))
-    }
-  }
-
-  "getServices" when {
-    "api-platform-test-user returns a 200 OK response" should {
-      "return the services from api-platform-test-user" in new Setup {
-        val services = Seq(Service("service-1", "Service One", Seq(UserTypes.INDIVIDUAL)))
-
-        stubFor(
-          get(urlEqualTo("/services"))
-            .willReturn(
-              aResponse()
-                .withBody(
-                  Json.toJson(services).toString()
-                )
-                .withStatus(OK)
-            )
-        )
-
-        val result = await(underTest.getServices())
-
-        result shouldBe services
-      }
-    }
-
-    "api-platform-test-user returns a response other than 200 OK" should {
-      "throw runtime exception" in new Setup {
-        stubFor(
-          get(urlEqualTo("/services"))
-            .willReturn(
-              aResponse()
-                .withStatus(CREATED)
-            )
-        )
-
-        intercept[RuntimeException](await(underTest.getServices()))
-      }
+      intercept[RuntimeException](await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax"))))
     }
   }
 
@@ -184,7 +144,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      intercept[LoginFailed] {
+      intercept[LoginFailedException] {
         await(underTest.authenticate(login))
       }
     }

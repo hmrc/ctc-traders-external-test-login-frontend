@@ -19,7 +19,7 @@ package controllers
 import akka.stream.Materializer
 import config.FrontendAppConfig
 import forms.LoginFormProvider
-import models.{Login, LoginFailed}
+import models.{Login, LoginFailedException}
 import play.api.data.{Form, FormError}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.LoginService
@@ -55,7 +55,7 @@ class LoginController @Inject() (
             loginService.authenticate(login) map {
               session => Redirect(appConfig.continueUrl).withSession(session)
             } recover {
-              case _: LoginFailed =>
+              case _: LoginFailedException =>
                 Unauthorized(view(boundForm.withError(FormError("value", "login.error.invalid"))))
             }
         )

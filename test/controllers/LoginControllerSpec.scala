@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.LoginFormProvider
-import models.{Login, LoginFailed}
+import models.{Login, LoginFailedException}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.data.FormError
@@ -91,7 +91,7 @@ class LoginControllerSpec extends SpecBase {
 
     "must return Unauthorized and errors when invalid data is submitted" in {
       when(mockLoginService.authenticate(any())(any(), any()))
-        .thenReturn(Future.failed(LoginFailed("")))
+        .thenReturn(Future.failed(LoginFailedException("")))
 
       val filledForm = form
         .bind(Map("userId" -> userId, "password" -> password))
@@ -112,7 +112,7 @@ class LoginControllerSpec extends SpecBase {
 
     "must return BadRequest and errors when empty data is submitted" in {
       when(mockLoginService.authenticate(any())(any(), any()))
-        .thenReturn(Future.failed(LoginFailed("")))
+        .thenReturn(Future.failed(LoginFailedException("")))
 
       val invalidAnswer = ""
 

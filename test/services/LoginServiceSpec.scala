@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ApiPlatformTestUserConnector
-import models.{AuthenticatedSession, Login, LoginFailed}
+import models.{AuthenticatedSession, Login, LoginFailedException}
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{mock, reset, when}
@@ -66,14 +66,14 @@ class LoginServiceSpec extends SpecBase {
   "LoginService" - {
 
     "must propagate LoginFailed exception when authentication fails" in {
-      when(mockApiPlatformTestUserConnector.authenticate(any())(any())).thenReturn(Future.failed(LoginFailed(userId)))
+      when(mockApiPlatformTestUserConnector.authenticate(any())(any())).thenReturn(Future.failed(LoginFailedException(userId)))
 
       val service = app.injector.instanceOf[LoginService]
 
       val result = service.authenticate(login)
 
       whenReady[Throwable, Assertion](result.failed) {
-        _ mustBe a[LoginFailed]
+        _ mustBe a[LoginFailedException]
       }
     }
 

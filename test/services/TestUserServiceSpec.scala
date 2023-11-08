@@ -18,8 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ApiPlatformTestUserConnector
-import models.UserTypes.{AGENT, INDIVIDUAL, ORGANISATION}
-import models.{Field, Service, TestIndividual}
+import models.TestUser
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import play.api.inject.bind
@@ -31,17 +30,7 @@ class TestUserServiceSpec extends SpecBase {
 
   private lazy val mockApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
-  private val service1 = "service1"
-  private val service2 = "service2"
-  private val service3 = "service3"
-  private val service4 = "service4"
-
-  private val services = Seq(
-    Service(service1, "Service 1", Seq(INDIVIDUAL)),
-    Service(service2, "Service 2", Seq(INDIVIDUAL, ORGANISATION)),
-    Service(service3, "Service 3", Seq(ORGANISATION)),
-    Service(service4, "Service 4", Seq(AGENT))
-  )
+  private val enrolments = Seq("common-transit-convention-traders")
 
   override protected def applicationBuilder(): GuiceApplicationBuilder =
     super
@@ -59,19 +48,17 @@ class TestUserServiceSpec extends SpecBase {
 
     "createUser" - {
       "should return a generated organisation when type is ORGANISATION" in {
-        // TODO - why does this only work with TestIndividual?
-        val organisation = TestIndividual("org-user", "org-password", Seq(Field("saUtr", "Self Assessment UTR", "1555369053")))
+        val organisation = TestUser("org-user", "org-password")
 
-        when(mockApiPlatformTestUserConnector.getServices()(any())).thenReturn(successful(services))
-        when(mockApiPlatformTestUserConnector.createOrg(any())(any())).thenReturn(successful(organisation))
+        when(mockApiPlatformTestUserConnector.createTestUser(any())(any())).thenReturn(successful(organisation))
 
         val service = app.injector.instanceOf[TestUserService]
 
-        val result = service.createUser(service3)
+        val result = service.createUser(enrolments)
 
         result.futureValue mustBe organisation
 
-        verify(mockApiPlatformTestUserConnector).createOrg(eqTo(Seq(service3)))(any())
+        verify(mockApiPlatformTestUserConnector).createTestUser(eqTo(enrolments))(any())
       }
     }
   }
