@@ -22,8 +22,7 @@ import play.api.Configuration
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
-  val host: String             = configuration.get[String]("host")
-  val appName: String          = configuration.get[String]("appName")
-  lazy val serviceKey: String  = configuration.get[String]("service-name")
-  lazy val continueUrl: String = configuration.get[String]("continue-url")
+  val appName: String            = configuration.get[String]("appName")
+  lazy val services: Seq[String] = configuration.get[Seq[String]]("services")
+  lazy val continueUrl: String   = configuration.get[String]("continue-url")
 }

@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
-package object govuk {
+import play.api.libs.json.{Json, Writes}
 
-  object all extends ImplicitConversions
+case class Login(username: String, password: String)
+
+object Login {
+
+  implicit val writes: Writes[Login] = Json.writes[Login]
 }

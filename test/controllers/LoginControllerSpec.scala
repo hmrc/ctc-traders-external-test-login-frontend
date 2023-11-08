@@ -16,95 +16,120 @@
 
 package controllers
 
-import akka.stream.Materializer
-import config.FrontendAppConfig
-import handlers.ErrorHandler
-import helpers.AsyncHmrcSpec
-import models.{LoginFailed, LoginRequest}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.MessagesApi
+import base.SpecBase
+import forms.LoginFormProvider
+import models.{Login, LoginFailedException}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import play.api.data.FormError
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{ContinueUrlService, LoginService}
+import services.LoginService
 import views.html.LoginView
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.{failed, successful}
 
-class LoginControllerSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
+class LoginControllerSpec extends SpecBase {
 
-  trait Setup {
-    implicit val materializer = app.injector.instanceOf[Materializer]
-    private val csrfAddToken  = app.injector.instanceOf[play.filters.csrf.CSRFAddToken]
+  private val formProvider = new LoginFormProvider()
+  private val form         = formProvider()
 
-    val messagesApi: MessagesApi               = app.injector.instanceOf[MessagesApi]
-    val loginService: LoginService             = mock[LoginService]
-    val continueUrlService: ContinueUrlService = mock[ContinueUrlService]
-    implicit val appConfig: FrontendAppConfig  = app.injector.instanceOf[FrontendAppConfig]
-    val errorHandler: ErrorHandler             = app.injector.instanceOf[ErrorHandler]
-    val mcc                                    = app.injector.instanceOf[MessagesControllerComponents]
-    val loginView                              = app.injector.instanceOf[LoginView]
+  private val userId   = "userId"
+  private val password = "password"
+  private val session  = Session(Map("authBearerToken" -> "Bearer AUTH_TOKEN"))
 
-    val underTest = new LoginController(loginService, errorHandler, continueUrlService, mcc, loginView)
+  private lazy val loginRoute = routes.LoginController.onPageLoad().url
 
-    def execute[T <: play.api.mvc.AnyContent](action: Action[AnyContent], request: FakeRequest[T] = FakeRequest()): Future[Result] =
-      csrfAddToken(action)(request)
+  private lazy val mockLoginService: LoginService = mock[LoginService]
+
+  override protected def applicationBuilder(): GuiceApplicationBuilder =
+    super
+      .applicationBuilder()
+      .overrides(bind[LoginService].toInstance(mockLoginService))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockLoginService)
   }
 
-  "showLoginPage" should {
+  "LoginController" - {
 
-    "display the login page" in new Setup {
+    "must return OK and the correct view for a GET" in {
+      val request = FakeRequest(GET, loginRoute)
 
-      when(continueUrlService.isValidContinueUrl(*)).thenReturn(true)
+      val result = route(app, request).value
 
-      val result = execute(underTest.showLoginPage())
+      val view = app.injector.instanceOf[LoginView]
 
-      contentAsString(result) should include("Sign in to test NCTS Phase 5")
-      contentAsString(result) should include("Enter your test user details to sign in to the NCTS sandbox.")
-      contentAsString(result) should include("User ID")
-      contentAsString(result) should include("Password")
-      contentAsString(result) should include("If you have lost or forgotten your details")
-      contentAsString(result) should include("create a new test user")
-      contentAsString(result) should include("Sign in")
-    }
-  }
+      status(result) mustEqual OK
 
-  "login" should {
-
-    val loginRequest = LoginRequest("aUser", "aPassword")
-    val continueUrl  = "/continueUrl"
-    val request = FakeRequest()
-      .withFormUrlEncodedBody("userId" -> loginRequest.username, "password" -> loginRequest.password, "continue" -> continueUrl)
-
-    "display invalid userId or password when the credentials are invalid" in new Setup {
-      when(continueUrlService.isValidContinueUrl(*)).thenReturn(true)
-      when(loginService.authenticate(refEq(loginRequest))(*, *)).thenReturn(failed(LoginFailed("")))
-
-      val result = execute(underTest.login(), request = request)
-
-      contentAsString(result) should include("Invalid user ID or password. Try again.")
+      contentAsString(result) mustEqual
+        view(form)(request, messages).toString
     }
 
-    "return a 400 when the continue URL is not valid" in new Setup {
-      when(continueUrlService.isValidContinueUrl(*)).thenReturn(false)
+    "must redirect to the next page when valid data is submitted" in {
+      when(mockLoginService.authenticate(any())(any(), any()))
+        .thenReturn(Future.successful(session))
 
-      val result = execute(underTest.login(), request = request)
+      val request = FakeRequest(POST, loginRoute)
+        .withFormUrlEncodedBody(
+          "userId"   -> userId,
+          "password" -> password
+        )
 
-      status(result) shouldBe 400
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustBe frontendAppConfig.continueUrl
+
+      verify(mockLoginService).authenticate(eqTo(Login(userId, password)))(any(), any())
     }
 
-    "redirect to the continueUrl with the session when the credentials are valid and the continue URL is valid" in new Setup {
-      when(continueUrlService.isValidContinueUrl(*)).thenReturn(true)
-      val sessionIn = Session(Map("authBearerToken" -> "Bearer AUTH_TOKEN"))
-      when(loginService.authenticate(refEq(loginRequest))(*, *)).thenReturn(successful(sessionIn))
+    "must return Unauthorized and errors when invalid data is submitted" in {
+      when(mockLoginService.authenticate(any())(any(), any()))
+        .thenReturn(Future.failed(LoginFailedException("")))
 
-      val result = underTest.login()(request)
+      val filledForm = form
+        .bind(Map("userId" -> userId, "password" -> password))
+        .withError(FormError("value", "login.error.invalid"))
 
-      status(result) shouldBe 303
-      header("Location", result) shouldEqual Some(continueUrl)
-      session(result).get("authBearerToken") shouldBe Some("Bearer AUTH_TOKEN")
+      val request = FakeRequest(POST, loginRoute)
+        .withFormUrlEncodedBody("userId" -> userId, "password" -> password)
+
+      val result = route(app, request).value
+
+      val view = app.injector.instanceOf[LoginView]
+
+      status(result) mustEqual UNAUTHORIZED
+
+      contentAsString(result) mustEqual
+        view(filledForm)(request, messages).toString
+    }
+
+    "must return BadRequest and errors when empty data is submitted" in {
+      when(mockLoginService.authenticate(any())(any(), any()))
+        .thenReturn(Future.failed(LoginFailedException("")))
+
+      val invalidAnswer = ""
+
+      val filledForm = form
+        .bind(Map("userId" -> invalidAnswer, "password" -> invalidAnswer))
+
+      val request = FakeRequest(POST, loginRoute)
+        .withFormUrlEncodedBody("userId" -> invalidAnswer, "password" -> invalidAnswer)
+
+      val result = route(app, request).value
+
+      val view = app.injector.instanceOf[LoginView]
+
+      status(result) mustEqual BAD_REQUEST
+
+      contentAsString(result) mustEqual
+        view(filledForm)(request, messages).toString
     }
   }
 }

@@ -16,60 +16,83 @@
 
 package services
 
+import base.SpecBase
 import connectors.ApiPlatformTestUserConnector
-import helpers.AsyncHmrcSpec
-import models.{AuthenticatedSession, LoginFailed, LoginRequest}
-import org.joda.time.DateTimeUtils.{setCurrentMillisFixed, setCurrentMillisSystem}
-import org.scalatest.BeforeAndAfterAll
+import models.{AuthenticatedSession, Login, LoginFailedException}
+import org.joda.time.DateTime
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{mock, reset, when}
+import org.scalatest.Assertion
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Session
-import uk.gov.hmrc.http.SessionKeys.sessionId
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.Future
 
-class LoginServiceSpec extends AsyncHmrcSpec with BeforeAndAfterAll {
+class LoginServiceSpec extends SpecBase {
 
-  trait Setup {
-    implicit val hc                  = HeaderCarrier()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-    val underTest                    = new LoginService(apiPlatformTestUserConnector)
+  private val userId = "userId"
+  private val login  = Login(userId, "password")
+
+  private val uuid     = UUID.randomUUID()
+  private val dateTime = DateTime.now()
+
+  private val authBearerToken = "Bearer AUTH_TOKEN"
+
+  private val authenticatedSession = AuthenticatedSession(authBearerToken, "/auth/oid/12345", "GG_TOKEN", "Individual")
+
+  private lazy val mockApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+  private lazy val mockUUIDService                  = mock[UUIDService]
+  private lazy val mockDateTimeService              = mock[DateTimeService]
+
+  override protected def applicationBuilder(): GuiceApplicationBuilder =
+    super
+      .applicationBuilder()
+      .overrides(
+        bind[ApiPlatformTestUserConnector].toInstance(mockApiPlatformTestUserConnector),
+        bind[UUIDService].toInstance(mockUUIDService),
+        bind[DateTimeService].toInstance(mockDateTimeService)
+      )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockApiPlatformTestUserConnector)
+    reset(mockUUIDService)
+    reset(mockDateTimeService)
   }
 
-  override def beforeAll(): Unit =
-    setCurrentMillisFixed(10000)
+  "LoginService" - {
 
-  override def afterAll(): Unit =
-    setCurrentMillisSystem()
+    "must propagate LoginFailed exception when authentication fails" in {
+      when(mockApiPlatformTestUserConnector.authenticate(any())(any())).thenReturn(Future.failed(LoginFailedException(userId)))
 
-  "login" should {
-    "return the session when the authentication is successful" in new Setup {
+      val service = app.injector.instanceOf[LoginService]
 
-      val loginRequest = LoginRequest("user", "password")
-      val authSession  = AuthenticatedSession("Bearer AUTH_TOKEN", "/auth/oid/12345", "GG_TOKEN", "Individual")
+      val result = service.authenticate(login)
 
-      when(apiPlatformTestUserConnector.authenticate(loginRequest)).thenReturn(successful(authSession))
-
-      val result = await(underTest.authenticate(loginRequest))
-
-      result shouldBe Session(
-        Map(
-          SessionKeys.authToken            -> authSession.authBearerToken,
-          SessionKeys.lastRequestTimestamp -> "10000",
-          sessionId                        -> result.data(sessionId)
-        )
-      )
+      whenReady[Throwable, Assertion](result.failed) {
+        _ mustBe a[LoginFailedException]
+      }
     }
 
-    "propagate LoginFailed exception when authentication fails" in new Setup {
+    "must build session when authentication succeeds" in {
+      when(mockUUIDService.randomUUID).thenReturn(uuid)
+      when(mockDateTimeService.now).thenReturn(dateTime)
+      when(mockApiPlatformTestUserConnector.authenticate(any())(any())).thenReturn(Future.successful(authenticatedSession))
 
-      val loginRequest = LoginRequest("user", "password")
+      val service = app.injector.instanceOf[LoginService]
 
-      when(apiPlatformTestUserConnector.authenticate(loginRequest)).thenReturn(failed(new LoginFailed("user")))
+      val result = service.authenticate(login)
 
-      intercept[LoginFailed] {
-        await(underTest.authenticate(loginRequest))
-      }
+      result.futureValue mustBe Session(
+        Map(
+          "sessionId" -> s"session-$uuid",
+          "authToken" -> authBearerToken,
+          "ts"        -> dateTime.getMillis.toString
+        )
+      )
     }
   }
 }

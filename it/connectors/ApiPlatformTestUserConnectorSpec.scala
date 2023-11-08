@@ -18,7 +18,6 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helpers.{AsyncHmrcSpec, WiremockSugar}
-import models.JsonFormatters._
 import models._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -39,8 +38,8 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
       .configure(("metrics.jvm", false))
       .build()
 
-  private val loginRequest = LoginRequest("user", "password")
-  private val loginPayload = Json.toJson(LoginRequest("user", "password")).toString
+  private val login        = Login("user", "password")
+  private val loginPayload = Json.toJson(login).toString
 
   trait Setup {
     implicit val hc = HeaderCarrier()
@@ -53,9 +52,8 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
     }
   }
 
-  "createOrg" should {
-    "return a generated organisation" in new Setup {
-      private val saUtr    = "1555369052"
+  "createTestUser" should {
+    "return a generated test user" in new Setup {
       private val userId   = "user"
       private val password = "password"
 
@@ -93,11 +91,10 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      val result = await(underTest.createOrg(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
+      val result = await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
 
       result.userId shouldBe userId
       result.password shouldBe password
-      result.fields should contain(Field("eoriNumber", "Economic Operator Registration and Identification (EORI) number", saUtr))
     }
 
     "fail when api-platform-test-user returns a response that is not 201 CREATED" in new Setup {
@@ -109,44 +106,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      intercept[RuntimeException](await(underTest.createOrg(Seq("national-insurance", "self-assessment", "mtd-income-tax"))))
-    }
-  }
-
-  "getServices" when {
-    "api-platform-test-user returns a 200 OK response" should {
-      "return the services from api-platform-test-user" in new Setup {
-        val services = Seq(Service("service-1", "Service One", Seq(UserTypes.INDIVIDUAL)))
-
-        stubFor(
-          get(urlEqualTo("/services"))
-            .willReturn(
-              aResponse()
-                .withBody(
-                  Json.toJson(services).toString()
-                )
-                .withStatus(OK)
-            )
-        )
-
-        val result = await(underTest.getServices())
-
-        result shouldBe services
-      }
-    }
-
-    "api-platform-test-user returns a response other than 200 OK" should {
-      "throw runtime exception" in new Setup {
-        stubFor(
-          get(urlEqualTo("/services"))
-            .willReturn(
-              aResponse()
-                .withStatus(CREATED)
-            )
-        )
-
-        intercept[RuntimeException](await(underTest.getServices()))
-      }
+      intercept[RuntimeException](await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax"))))
     }
   }
 
@@ -169,7 +129,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      val result = await(underTest.authenticate(loginRequest))
+      val result = await(underTest.authenticate(login))
 
       result shouldBe AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
     }
@@ -177,15 +137,15 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
     "fail with LoginFailed when the credentials are not valid" in new Setup {
       stubFor(
         post(urlEqualTo("/session"))
-          .withRequestBody(equalToJson(toJson(loginRequest).toString()))
+          .withRequestBody(equalToJson(toJson(login).toString()))
           .willReturn(
             aResponse()
               .withStatus(UNAUTHORIZED)
           )
       )
 
-      intercept[LoginFailed] {
-        await(underTest.authenticate(loginRequest))
+      intercept[LoginFailedException] {
+        await(underTest.authenticate(login))
       }
     }
 
@@ -200,7 +160,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
       )
 
       intercept[UpstreamErrorResponse] {
-        await(underTest.authenticate(loginRequest))
+        await(underTest.authenticate(login))
       }.statusCode shouldBe INTERNAL_SERVER_ERROR
     }
 

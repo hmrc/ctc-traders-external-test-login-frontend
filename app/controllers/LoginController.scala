@@ -18,62 +18,46 @@ package controllers
 
 import akka.stream.Materializer
 import config.FrontendAppConfig
-import handlers.ErrorHandler
-import models.{LoginFailed, LoginRequest}
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
-import services.{ContinueUrlService, LoginService}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import forms.LoginFormProvider
+import models.{Login, LoginFailedException}
+import play.api.data.{Form, FormError}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.LoginService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.LoginView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LoginController @Inject() (
   loginService: LoginService,
-  errorHandler: ErrorHandler,
-  continueUrlService: ContinueUrlService,
   mcc: MessagesControllerComponents,
-  loginView: LoginView
+  formProvider: LoginFormProvider,
+  view: LoginView
 )(implicit val mat: Materializer, val appConfig: FrontendAppConfig, val ec: ExecutionContext)
-    extends FrontendController(mcc)
-    with WithUnsafeDefaultFormBinding {
+    extends FrontendController(mcc) {
 
-  case class LoginForm(userId: String, password: String, continue: String)
+  private val form: Form[Login] = formProvider()
 
-  private val loginForm = Form(
-    mapping(
-      "userId"   -> nonEmptyText,
-      "password" -> nonEmptyText,
-      "continue" -> nonEmptyText
-    )(LoginForm.apply)(LoginForm.unapply)
-  )
-
-  def showLoginPage() = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action {
     implicit request =>
-      successful(Ok(loginView(appConfig.continueUrl)))
+      Ok(view(form))
   }
 
-  def login() = Action.async {
+  def onSubmit(): Action[AnyContent] = Action.async {
     implicit request =>
-      def handleLogin(loginForm: LoginForm) =
-        loginService.authenticate(LoginRequest(loginForm.userId, loginForm.password)) map {
-          session =>
-            Redirect(loginForm.continue).withSession(session)
-        } recover {
-          case e: LoginFailed =>
-            Unauthorized(loginView(loginForm.continue, Some("Invalid user ID or password. Try again.")))
-        }
-
-      loginForm.bindFromRequest.fold(
-        _ => badRequest(),
-        loginForm => if (continueUrlService.isValidContinueUrl(loginForm.continue)) handleLogin(loginForm) else badRequest()
-      )
+      val boundForm = form.bindFromRequest()
+      boundForm
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+          login =>
+            loginService.authenticate(login) map {
+              session => Redirect(appConfig.continueUrl).withSession(session)
+            } recover {
+              case _: LoginFailedException =>
+                Unauthorized(view(boundForm.withError(FormError("value", "login.error.invalid"))))
+            }
+        )
   }
-
-  private def badRequest()(implicit request: Request[AnyContent]) = successful(BadRequest(errorHandler.standardErrorTemplate("", "", "Invalid Parameters")))
 }

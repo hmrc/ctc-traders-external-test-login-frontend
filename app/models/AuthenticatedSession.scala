@@ -16,4 +16,4 @@
 
 package models
 
-case class LoginFailed(userId: String) extends Exception
+case class AuthenticatedSession(authBearerToken: String, authorityURI: String, gatewayToken: String, affinityGroup: String)

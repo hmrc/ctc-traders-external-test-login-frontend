@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels
+package services
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Key
+import java.util.UUID
 
-object implicits extends ImplicitConversions
+class UUIDService {
 
-trait ImplicitConversions {
+  def randomUUID: UUID = UUID.randomUUID
 
-  implicit def stringToText(string: String)(implicit messages: Messages): Text =
-    Text(messages(string))
-
-  implicit def stringToKey(string: String)(implicit messages: Messages): Key =
-    Key(content = Text(messages(string)))
 }

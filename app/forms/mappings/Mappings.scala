@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package viewmodels
+package forms.mappings
 
-sealed trait LegendSize
+import models.Login
+import play.api.data.FieldMapping
+import play.api.data.Forms.of
 
-object LegendSize {
-  case object ExtraLarge extends WithCssClass("govuk-fieldset__legend--xl") with LegendSize
-  case object Large extends WithCssClass("govuk-fieldset__legend--l") with LegendSize
-  case object Medium extends WithCssClass("govuk-fieldset__legend--m") with LegendSize
-  case object Small extends WithCssClass("govuk-fieldset__legend--s") with LegendSize
+trait Mappings extends Formatters {
+
+  protected def login(requiredKey: String => String, args: Any*): FieldMapping[Login] =
+    of(loginFormatter(requiredKey, args: _*))
+
 }

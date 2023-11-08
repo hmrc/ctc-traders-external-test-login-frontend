@@ -1,5 +1,4 @@
 service.name = NCTS Phase 5 sandbox
-service.homePageUrl = /ncts-p5-sandbox/create-test-user
 
 site.back = Back
 site.remove = Remove
@@ -13,6 +12,7 @@ site.signIn = Sign in
 site.govuk = GOV.UK
 
 error.browser.title.prefix = Error:
+error.summary.title = There is a problem
 
 createTestUser.title = Create a test user for NCTS Phase 5 - Manage your transit movements - GOV.UK
 createTestUser.heading = Create a test user for NCTS Phase 5
@@ -25,10 +25,10 @@ createTestUser.button = Create test user
 
 testUser.title = Your test user for NCTS Phase 5 - Manage your transit movements - GOV.UK
 testUser.heading = Your test user for NCTS Phase 5
-testUser.heading.p1 = Use these details to sign in to the NCTS sandbox:
-testUser.heading.p2 = You can reuse your test user so take note of these details and keep them somewhere secure.
-testUser.heading.p3 = Your test user will only work with the NCTS sandbox - you cannot use it on the live service on Gov.uk.
-testUser.heading.button = Sign in
+testUser.p1 = Use these details to sign in to the NCTS sandbox:
+testUser.p2 = You can reuse your test user so take note of these details and keep them somewhere secure.
+testUser.p3 = Your test user will only work with the NCTS sandbox - you cannot use it on the live service on Gov.uk.
+testUser.button = Sign in
 
 login.title = Sign in to test NCTS Phase 5 - Manage your transit movements - GOV.UK
 login.heading = Sign in to test NCTS Phase 5
@@ -36,4 +36,8 @@ login.p1 = Enter your test user details to sign in to the NCTS sandbox.
 login.p2 = If you have lost or forgotten your details,
 login.link = create a new test user
 login.button = Sign in
-login.error = There is a problem
+login.userId.error.required = Enter your user ID
+login.password.error.required = Enter your password
+login.userId = User ID
+login.password = Password
+login.error.invalid = Invalid user ID or password. Try again.

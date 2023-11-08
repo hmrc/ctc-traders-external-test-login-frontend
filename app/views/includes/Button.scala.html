@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package services
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-import config.FrontendAppConfig
+@this(govukButton: GovukButton)
 
-import javax.inject.{Inject, Singleton}
+@(
+    messageKey: String,
+    attributes: Map[String, String] = Map.empty
+)(implicit messages: Messages)
 
-@Singleton
-class ContinueUrlService @Inject() (appConfig: FrontendAppConfig) {
-
-  private lazy val continueUrl = appConfig.continueUrl
-
-  def isValidContinueUrl(url: String): Boolean = {
-    val strippedUrl = stripQueryParameters(url)
-    strippedUrl == continueUrl
-  }
-
-  private def stripQueryParameters(url: String) = url.split('?')(0)
-}
+@govukButton(
+    Button(
+        preventDoubleClick = Some(true),
+        content = Text(messages(messageKey)),
+        attributes = attributes ++ Map("id" -> "submit")
+    )
+)

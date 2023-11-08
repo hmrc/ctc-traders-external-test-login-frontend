@@ -17,27 +17,29 @@
 package services
 
 import connectors.ApiPlatformTestUserConnector
-import models.{AuthenticatedSession, LoginRequest}
-import org.joda.time.DateTime
+import models.{AuthenticatedSession, Login}
 import play.api.mvc.Session
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.SessionKeys._
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
-import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LoginService @Inject() (apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+class LoginService @Inject() (
+  apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+  uuidService: UUIDService,
+  dateTimeService: DateTimeService
+) {
 
-  def authenticate(loginRequest: LoginRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Session] =
-    apiPlatformTestUserConnector.authenticate(loginRequest) map buildSession
+  def authenticate(login: Login)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Session] =
+    apiPlatformTestUserConnector.authenticate(login).map(buildSession)
 
   private def buildSession(authSession: AuthenticatedSession): Session = Session(
     Map(
-      sessionId            -> SessionId(s"session-${UUID.randomUUID}").value,
+      sessionId            -> s"session-${uuidService.randomUUID}",
       authToken            -> authSession.authBearerToken,
-      lastRequestTimestamp -> DateTime.now.getMillis.toString
+      lastRequestTimestamp -> dateTimeService.now.getMillis.toString
     )
   )
 }

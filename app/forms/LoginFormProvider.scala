@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-import models.UserTypes.UserType
+import forms.mappings.Mappings
+import models.Login
+import play.api.data.Form
 
-case class Service(key: String, name: String, allowedUserTypes: Seq[UserType])
+import javax.inject.Inject
+
+class LoginFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Login] =
+    Form(
+      "value" -> login(
+        key => s"login.$key.error.required"
+      )
+    )
+}

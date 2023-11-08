@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package viewmodels
+package controllers
 
-sealed trait LabelSize
+import base.SpecBase
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 
-object LabelSize {
-  case object ExtraLarge extends WithCssClass("govuk-label--xl") with LabelSize
-  case object Large extends WithCssClass("govuk-label--l") with LabelSize
-  case object Medium extends WithCssClass("govuk-label--m") with LabelSize
-  case object Small extends WithCssClass("govuk-label--s") with LabelSize
+class RedirectControllerSpec extends SpecBase {
+
+  private lazy val redirectRoute = routes.RedirectController.redirect().url
+
+  "RedirectController" - {
+
+    "must redirect to the next page" in {
+      val request = FakeRequest(GET, redirectRoute)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustBe routes.CreateTestUserController.onPageLoad().url
+    }
+  }
 }

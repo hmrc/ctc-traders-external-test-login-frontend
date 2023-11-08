@@ -16,10 +16,28 @@
 
 package models
 
-import play.api.libs.json._
+import base.SpecBase
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.Json
 
-case class TestUser(userId: String, password: String)
+class LoginSpec extends SpecBase with ScalaCheckPropertyChecks {
 
-object TestUser {
-  implicit val reads: Reads[TestUser] = Json.reads[TestUser]
+  "Login" - {
+
+    "must serialise" in {
+      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+        (userId, password) =>
+          val login  = Login(userId, password)
+          val result = Json.toJson(login)
+          result mustBe Json.parse(s"""
+              |{
+              |  "username" : "$userId",
+              |  "password" : "$password"
+              |}
+              |""".stripMargin)
+      }
+    }
+  }
+
 }

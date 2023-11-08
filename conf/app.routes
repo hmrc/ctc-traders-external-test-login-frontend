@@ -1,16 +1,15 @@
 # microservice specific routes
 
 ->         /hmrc-frontend                                hmrcfrontend.Routes
-
-GET        /create-test-user                             controllers.TestUserController.showCreateUserPageGeneric()
-
-GET        /test-user                                    controllers.TestUserController.createUserGeneric()
-
 GET        /assets/*file                                 controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /sign-in                                      controllers.LoginController.showLoginPage()
+GET        /                                             controllers.RedirectController.redirect()
 
-POST       /sign-in                                      controllers.LoginController.login()
+GET        /create-test-user                             controllers.CreateTestUserController.onPageLoad()
+POST       /create-test-user                             controllers.CreateTestUserController.onSubmit()
 
+GET        /test-user                                    controllers.TestUserController.onPageLoad()
+POST       /test-user                                    controllers.TestUserController.onSubmit()
 
-
+GET        /sign-in                                      controllers.LoginController.onPageLoad()
+POST       /sign-in                                      controllers.LoginController.onSubmit()

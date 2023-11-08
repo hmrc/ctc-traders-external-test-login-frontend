@@ -16,35 +16,30 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import logger.ApplicationLogger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.TestUserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.TestUserView
+import views.html.CreateTestUserView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class TestUserController @Inject() (
+class CreateTestUserController @Inject() (
   override val messagesApi: MessagesApi,
-  testUserService: TestUserService,
   messagesControllerComponents: MessagesControllerComponents,
-  view: TestUserView
-)(implicit val ec: ExecutionContext, config: FrontendAppConfig)
+  view: CreateTestUserView
+)(implicit val ec: ExecutionContext)
     extends FrontendController(messagesControllerComponents)
     with I18nSupport
     with ApplicationLogger {
 
-  def onPageLoad(): Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action {
     implicit request =>
-      testUserService.createUser(config.services) map (
-        user => Ok(view(user))
-      )
+      Ok(view())
   }
 
   def onSubmit(): Action[AnyContent] = Action {
-    Redirect(routes.LoginController.onPageLoad())
+    Redirect(routes.TestUserController.onPageLoad())
   }
 }

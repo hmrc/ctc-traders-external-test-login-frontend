@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
-import play.api.data.Field
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
+import play.api.libs.json.{Json, Reads}
 
-trait ErrorMessageAwareness {
+case class AuthenticationResponse(gatewayToken: String, affinityGroup: String)
 
-  def errorMessage(field: Field)(implicit messages: Messages): Option[ErrorMessage] =
-    field.error
-      .map {
-        err =>
-          ErrorMessage(content = Text(messages(err.message, err.args: _*)))
-      }
+object AuthenticationResponse {
+  implicit val reads: Reads[AuthenticationResponse] = Json.format[AuthenticationResponse]
 }

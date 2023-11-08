@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels
+package services
 
-abstract class WithName(name: String) {
-  override val toString: String = name
+import org.joda.time.DateTime
+
+class DateTimeService {
+
+  def now: DateTime = DateTime.now
+
 }
