@@ -31,17 +31,8 @@ class ApiPlatformTestUserConnector @Inject() (
   httpClient: HttpClient,
   servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
-  private val serviceKey = "api-platform-test-user"
 
-  val serviceUrl: String = {
-    val context = servicesConfig.getConfString(s"$serviceKey.context", "")
-
-    if (context.nonEmpty) {
-      s"${servicesConfig.baseUrl(serviceKey)}/$context"
-    } else {
-      servicesConfig.baseUrl(serviceKey)
-    }
-  }
+  val serviceUrl: String = servicesConfig.baseUrl("api-platform-test-user")
 
   def createTestUser(enrolments: Seq[String])(implicit hc: HeaderCarrier): Future[TestUser] = {
     val writes: Writes[Seq[String]] = Writes(

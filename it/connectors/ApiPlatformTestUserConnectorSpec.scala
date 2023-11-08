@@ -52,8 +52,8 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
     }
   }
 
-  "createOrg" should {
-    "return a generated organisation" in new Setup {
+  "createTestUser" should {
+    "return a generated test user" in new Setup {
       private val userId   = "user"
       private val password = "password"
 
