@@ -19,14 +19,14 @@ package services
 import base.SpecBase
 import connectors.ApiPlatformTestUserConnector
 import models.{AuthenticatedSession, Login, LoginFailedException}
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.Assertion
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Session
 
+import java.time.Instant
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,15 +37,15 @@ class LoginServiceSpec extends SpecBase {
   private val login  = Login(userId, "password")
 
   private val uuid     = UUID.randomUUID()
-  private val dateTime = DateTime.now()
+  private val dateTime = Instant.ofEpochMilli(1707738079235L: Long)
 
   private val authBearerToken = "Bearer AUTH_TOKEN"
 
   private val authenticatedSession = AuthenticatedSession(authBearerToken, "/auth/oid/12345", "GG_TOKEN", "Individual")
 
-  private lazy val mockApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-  private lazy val mockUUIDService                  = mock[UUIDService]
-  private lazy val mockDateTimeService              = mock[DateTimeService]
+  private lazy val mockApiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+  private lazy val mockUUIDService: UUIDService                                   = mock[UUIDService]
+  private lazy val mockDateTimeService: DateTimeService                           = mock[DateTimeService]
 
   override protected def applicationBuilder(): GuiceApplicationBuilder =
     super
@@ -90,7 +90,7 @@ class LoginServiceSpec extends SpecBase {
         Map(
           "sessionId" -> s"session-$uuid",
           "authToken" -> authBearerToken,
-          "ts"        -> dateTime.getMillis.toString
+          "ts"        -> "1707738079235"
         )
       )
     }

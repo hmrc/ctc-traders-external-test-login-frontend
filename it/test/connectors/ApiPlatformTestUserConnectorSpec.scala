@@ -17,9 +17,8 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import helpers.{AsyncHmrcSpec, WiremockSugar}
+import helpers.ItSpecBase
 import models._
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.HeaderNames.{AUTHORIZATION, LOCATION}
 import play.api.http.Status._
@@ -31,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar with GuiceOneAppPerSuite {
+class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
@@ -52,8 +51,8 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
     }
   }
 
-  "createTestUser" should {
-    "return a generated test user" in new Setup {
+  "createTestUser" - {
+    "should return a generated test user" in new Setup {
       private val userId   = "user"
       private val password = "password"
 
@@ -93,8 +92,8 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
 
       val result = await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
 
-      result.userId shouldBe userId
-      result.password shouldBe password
+      result.userId mustBe userId
+      result.password mustBe password
     }
 
     "fail when api-platform-test-user returns a response that is not 201 CREATED" in new Setup {
@@ -106,12 +105,14 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
           )
       )
 
-      intercept[RuntimeException](await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax"))))
+      intercept[RuntimeException] {
+        await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
+      }
     }
   }
 
-  "authenticate" should {
-    "return the auth session when the credentials are valid" in new Setup {
+  "authenticate" - {
+    "should return the auth session when the credentials are valid" in new Setup {
       val authBearerToken = "Bearer AUTH_TOKEN"
       val userOid         = "/auth/oid/12345"
       val gatewayToken    = "GG_TOKEN"
@@ -131,7 +132,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
 
       val result = await(underTest.authenticate(login))
 
-      result shouldBe AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
+      result mustBe AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
     }
 
     "fail with LoginFailed when the credentials are not valid" in new Setup {
@@ -161,7 +162,7 @@ class ApiPlatformTestUserConnectorSpec extends AsyncHmrcSpec with WiremockSugar 
 
       intercept[UpstreamErrorResponse] {
         await(underTest.authenticate(login))
-      }.statusCode shouldBe INTERNAL_SERVER_ERROR
+      }.statusCode mustBe INTERNAL_SERVER_ERROR
     }
 
   }

@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.ApiPlatformTestUserConnector
 import models.TestUser
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -28,7 +28,7 @@ import scala.concurrent.Future.successful
 
 class TestUserServiceSpec extends SpecBase {
 
-  private lazy val mockApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+  private lazy val mockApiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
   private val enrolments = Seq("common-transit-convention-traders")
 
