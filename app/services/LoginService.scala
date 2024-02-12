@@ -39,7 +39,7 @@ class LoginService @Inject() (
     Map(
       sessionId            -> s"session-${uuidService.randomUUID}",
       authToken            -> authSession.authBearerToken,
-      lastRequestTimestamp -> dateTimeService.now.getMillis.toString
+      lastRequestTimestamp -> dateTimeService.now.toEpochMilli.toString
     )
   )
 }

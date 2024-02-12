@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.Materializer
 import config.FrontendAppConfig
 import forms.LoginFormProvider
 import models.{Login, LoginFailedException}
@@ -35,7 +34,7 @@ class LoginController @Inject() (
   mcc: MessagesControllerComponents,
   formProvider: LoginFormProvider,
   view: LoginView
-)(implicit val mat: Materializer, val appConfig: FrontendAppConfig, val ec: ExecutionContext)
+)(implicit val appConfig: FrontendAppConfig, val ec: ExecutionContext)
     extends FrontendController(mcc) {
 
   private val form: Form[Login] = formProvider()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package services
+package helpers
 
-import java.time.Instant
+import base.SpecBase
+import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 
-class DateTimeService {
-
-  def now: Instant = Instant.now()
-
-}
+trait ItSpecBase extends SpecBase with WiremockSugar with FutureAwaits with DefaultAwaitTimeout

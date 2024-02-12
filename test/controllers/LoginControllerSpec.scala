@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.LoginFormProvider
 import models.{Login, LoginFailedException}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
