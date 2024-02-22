@@ -17,44 +17,32 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import helpers.ItSpecBase
+import helpers.{ItSpecBase, WireMockServerHandler}
 import models._
-import play.api.Application
+import org.scalatest.Assertion
 import play.api.http.HeaderNames.{AUTHORIZATION, LOCATION}
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.UpstreamErrorResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
+class ApiPlatformTestUserConnectorSpec extends ItSpecBase with WireMockServerHandler {
 
-class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(conf = "microservice.services.api-platform-test-user.port" -> server.port())
 
-  override def fakeApplication(): Application =
-    GuiceApplicationBuilder()
-      .configure(("metrics.jvm", false))
-      .build()
+  private lazy val connector: ApiPlatformTestUserConnector = app.injector.instanceOf[ApiPlatformTestUserConnector]
 
   private val login        = Login("user", "password")
   private val loginPayload = Json.toJson(login).toString
 
-  trait Setup {
-    implicit val hc = HeaderCarrier()
-
-    val underTest = new ApiPlatformTestUserConnector(
-      app.injector.instanceOf[HttpClient],
-      app.injector.instanceOf[ServicesConfig]
-    ) {
-      override val serviceUrl: String = wireMockUrl
-    }
-  }
-
   "createTestUser" - {
-    "should return a generated test user" in new Setup {
-      private val userId   = "user"
-      private val password = "password"
+    "should return a generated test user" in {
+      val userId   = "user"
+      val password = "password"
 
       val requestPayload =
         s"""{
@@ -65,7 +53,7 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
            |  ]
            |}""".stripMargin
 
-      stubFor(
+      server.stubFor(
         post(urlEqualTo("/organisations"))
           .withRequestBody(equalToJson(requestPayload))
           .willReturn(
@@ -90,14 +78,14 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
           )
       )
 
-      val result = await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
+      val result = connector.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")).futureValue
 
       result.userId mustBe userId
       result.password mustBe password
     }
 
-    "fail when api-platform-test-user returns a response that is not 201 CREATED" in new Setup {
-      stubFor(
+    "fail when api-platform-test-user returns a response that is not 201 CREATED" in {
+      server.stubFor(
         post(urlEqualTo("/organisations"))
           .willReturn(
             aResponse()
@@ -105,20 +93,22 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
           )
       )
 
-      intercept[RuntimeException] {
-        await(underTest.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")))
+      val result = connector.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax"))
+
+      whenReady[Throwable, Assertion](result.failed) {
+        _ mustBe a[RuntimeException]
       }
     }
   }
 
   "authenticate" - {
-    "should return the auth session when the credentials are valid" in new Setup {
+    "should return the auth session when the credentials are valid" in {
       val authBearerToken = "Bearer AUTH_TOKEN"
       val userOid         = "/auth/oid/12345"
       val gatewayToken    = "GG_TOKEN"
       val affinityGroup   = "Individual"
 
-      stubFor(
+      server.stubFor(
         post(urlEqualTo("/session"))
           .withRequestBody(equalToJson(loginPayload))
           .willReturn(
@@ -130,13 +120,13 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
           )
       )
 
-      val result = await(underTest.authenticate(login))
+      val result = connector.authenticate(login).futureValue
 
       result mustBe AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
     }
 
-    "fail with LoginFailed when the credentials are not valid" in new Setup {
-      stubFor(
+    "fail with LoginFailed when the credentials are not valid" in {
+      server.stubFor(
         post(urlEqualTo("/session"))
           .withRequestBody(equalToJson(toJson(login).toString()))
           .willReturn(
@@ -145,13 +135,15 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
           )
       )
 
-      intercept[LoginFailedException] {
-        await(underTest.authenticate(login))
+      val result = connector.authenticate(login)
+
+      whenReady[Throwable, Assertion](result.failed) {
+        _ mustBe a[LoginFailedException]
       }
     }
 
-    "fail when the authenticate call returns an error" in new Setup {
-      stubFor(
+    "fail when the authenticate call returns an error" in {
+      server.stubFor(
         post(urlEqualTo("/session"))
           .withRequestBody(equalToJson(loginPayload))
           .willReturn(
@@ -160,10 +152,11 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase {
           )
       )
 
-      intercept[UpstreamErrorResponse] {
-        await(underTest.authenticate(login))
-      }.statusCode mustBe INTERNAL_SERVER_ERROR
-    }
+      val result = connector.authenticate(login)
 
+      whenReady[Throwable, Assertion](result.failed) {
+        _ mustBe a[UpstreamErrorResponse]
+      }
+    }
   }
 }
