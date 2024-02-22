@@ -16,7 +16,24 @@
 
 package helpers
 
-import base.SpecBase
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+import org.scalatest.OptionValues
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.http.HeaderCarrier
 
-trait ItSpecBase extends SpecBase with WiremockSugar with FutureAwaits with DefaultAwaitTimeout
+trait ItSpecBase extends AnyFreeSpec with Matchers with ScalaFutures with OptionValues with GuiceOneServerPerSuite with IntegrationPatience {
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .configure("metrics.enabled" -> false)
+
+  final override def fakeApplication(): Application =
+    guiceApplicationBuilder()
+      .build()
+}

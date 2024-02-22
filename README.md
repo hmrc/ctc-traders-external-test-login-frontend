@@ -9,13 +9,13 @@ Run it using the included shell script:
 
 This should start this service and any dependent services.
 
-Once the script has finished, the service will be available on: http://localhost:19154/ncts-p5-sandbox/create-test-user
+Once the script has finished, the service will be available on: http://localhost:19154/ncts-p5-sandbox
 
 ## Running tests
 
 Run all of the unit tests with `sbt test`
 
-Run all of the integration tests with `sbt it:test`
+Run all of the integration tests with `sbt it/test`
 
 Run the unit and integration tests with code coverage reporting using `./run_all_tests.sh`
 
