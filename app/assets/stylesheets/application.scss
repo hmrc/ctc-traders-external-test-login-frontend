@@ -1,6 +1,2 @@
-.js-visible {
-  display: none !important;
-}
-.js-enabled .js-visible {
-  display: inline-block !important;
-}
+$govuk-include-default-font-face: false;
+@import "lib/govuk-frontend/dist/govuk/base";
