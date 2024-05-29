@@ -36,10 +36,9 @@
             @messages("testUser.p1")
         </p>
 
-        <ul class="govuk-list govuk-list--bullet govuk-list--no-style">
-            @field("userid", "User ID", user.userId)
-            @field("password", "Password", user.password)
-        </ul>
+        @field("userid", messages("testUser.userId"), user.userId)
+
+        @field("password", messages("testUser.password"), user.password)
 
         <p class="govuk-body">
             @messages("testUser.p2")
