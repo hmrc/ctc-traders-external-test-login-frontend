@@ -23,6 +23,6 @@ import play.api.data.Forms.of
 trait Mappings extends Formatters {
 
   protected def login(requiredKey: String => String, args: Any*): FieldMapping[Login] =
-    of(loginFormatter(requiredKey, args: _*))
+    of(loginFormatter(requiredKey, args *))
 
 }
