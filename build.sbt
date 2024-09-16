@@ -6,7 +6,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 lazy val appName: String = "ctc-traders-external-test-login-frontend"
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "3.5.0"
 ThisBuild / scalafmtOnCompile := true
 
 lazy val microservice = (project in file("."))
@@ -43,7 +43,7 @@ lazy val microservice = (project in file("."))
       "-language:postfixOps",
       "-language:higherKinds",
       "-Wconf:src=routes/.*:s",
-      "-Wconf:cat=unused-imports&src=html/.*:s",
+      "-Wconf:src=html/.*:s",
     ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,

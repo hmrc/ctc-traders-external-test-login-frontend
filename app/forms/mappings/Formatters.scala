@@ -41,7 +41,7 @@ trait Formatters {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Login] = {
       def bind(key: String): Either[Seq[FormError], String] =
-        stringFormatter(requiredKey(key), args: _*).bind(key, data)
+        stringFormatter(requiredKey(key), args *).bind(key, data)
 
       (bind("userId"), bind("password")) match {
         case (Right(userId), Right(password))         => Right(Login(userId, password))
