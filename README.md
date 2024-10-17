@@ -9,7 +9,7 @@ Run it using the included shell script:
 
 This should start this service and any dependent services.
 
-Once the script has finished, the service will be available on: http://localhost:19154/ncts-p5-sandbox
+Once the script has finished, the service will be available on: http://localhost:19154/ncts-p5-testing-environment
 
 ## Running tests
 
