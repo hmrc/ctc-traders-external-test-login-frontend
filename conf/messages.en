@@ -14,7 +14,7 @@ site.govuk = GOV.UK
 error.browser.title.prefix = Error:
 error.summary.title = There is a problem
 
-createTestUser.title = Create a test user for NCTS Phase 5 - Manage your transit movements - GOV.UK
+createTestUser.title = Create a test user for NCTS Phase 5
 createTestUser.heading = Create a test user for NCTS Phase 5
 createTestUser.p1 = To test NCTS Phase 5, you need to create a user for our testing environment.
 createTestUser.p2 = The NCTS testing environment is a replica of NCTS. It looks just like the live service but it is for testing purposes only. Just you and the other testers can see it.
@@ -23,7 +23,7 @@ createTestUser.already.link.1 = If you already have a test user,
 createTestUser.already.link.2 = sign in here
 createTestUser.button = Create test user
 
-testUser.title = Your test user for NCTS Phase 5 - Manage your transit movements - GOV.UK
+testUser.title = Your test user for NCTS Phase 5
 testUser.heading = Your test user for NCTS Phase 5
 testUser.p1 = Use these details to sign in to the NCTS testing environment:
 testUser.p2 = You can reuse your test user so take note of these details and keep them somewhere secure.
@@ -32,7 +32,7 @@ testUser.button = Sign in
 testUser.userId = User ID
 testUser.password = Password
 
-login.title = Sign in to test NCTS Phase 5 - Manage your transit movements - GOV.UK
+login.title = Sign in to test NCTS Phase 5
 login.heading = Sign in to test NCTS Phase 5
 login.p1 = Enter your test user details to sign in to the NCTS testing environment.
 login.p2 = If you have lost or forgotten your details,

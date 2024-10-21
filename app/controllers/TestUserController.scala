@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import logger.ApplicationLogger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.TestUserService
@@ -34,8 +33,7 @@ class TestUserController @Inject() (
   view: TestUserView
 )(implicit val ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendController(messagesControllerComponents)
-    with I18nSupport
-    with ApplicationLogger {
+    with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>

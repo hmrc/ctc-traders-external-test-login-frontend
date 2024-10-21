@@ -14,20 +14,17 @@
  * limitations under the License.
  *@
 
-@import controllers.routes
-@import views.html.govuk_wrapper
-@import views.html.includes
-@import views.html.includes._
+@import views.html.components.{Button => MyButton}
 
 @this(
     govUkWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
-    button: includes.Button
+    button: MyButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govUkWrapper(pageTitle = Some(messages("createTestUser.title"))) {
+@govUkWrapper(pageTitle = Some(titleNoForm(messages("createTestUser.title")))) {
 
     @formHelper(action = routes.CreateTestUserController.onSubmit(), Symbol("autoComplete") -> "off") {
         <h1 class="govuk-heading-xl">@messages("createTestUser.heading")</h1>

@@ -1,5 +1,5 @@
-@*
- * Copyright 2023 HM Revenue & Customs
+/*
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,21 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+package services
 
-@this(
-    govUkErrorSummary: GovukErrorSummary
-)
+import base.SpecBase
 
-@(errors: Seq[FormError])(implicit messages: Messages)
+class UUIDServiceSpec extends SpecBase {
 
-@if(errors.nonEmpty) {
-    @govUkErrorSummary(
-        ErrorSummary(
-            errorList = errors.asTextErrorLinks,
-            title = Text(messages("error.summary.title"))
-        )
-    )
+  private val service = new UUIDService()
+
+  "UUIDService" - {
+    "randomUUID" - {
+      "must return a random UUID" in {
+        val uuid1 = service.randomUUID
+        val uuid2 = service.randomUUID
+        uuid1 must not equal uuid2
+      }
+    }
+  }
 }

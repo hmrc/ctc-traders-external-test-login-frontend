@@ -40,7 +40,7 @@ trait SpecBase
     with GuiceOneAppPerSuite
     with BeforeAndAfterEach {
 
-  def messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  implicit def messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   def frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

@@ -14,19 +14,16 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.LoginController
 @import models.Login
-@import views.html.includes
-@import views.html.includes._
-@import views.html.govuk_wrapper
+@import views.html.components.{Button, ErrorSummary, InputText}
 
 @this(
     govUkWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
-    errors: errorSummary,
+    errors: ErrorSummary,
     govukFieldset: GovukFieldset,
-    textField: field,
-    button: includes.Button
+    inputText: InputText,
+    button: Button
 )
 
 @(form: Form[Login])(implicit request: Request[_], messages: Messages)
@@ -43,14 +40,14 @@
             </span>
         }
 
-        @textField(
+        @inputText(
             id = "userId",
             field = form("userId"),
             labelKey = "login.userId",
             inputType = "text"
         )
 
-        @textField(
+        @inputText(
             id = "password",
             field = form("password"),
             labelKey = "login.password",
@@ -70,7 +67,7 @@
     )
 }
 
-@govUkWrapper(pageTitle = Some(messages("login.title"))) {
+@govUkWrapper(pageTitle = Some(title(form, messages("login.title")))) {
 
     @formHelper(action = routes.LoginController.onSubmit(), Symbol("autoComplete") -> "off") {
 
