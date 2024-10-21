@@ -16,7 +16,6 @@
 
 package controllers
 
-import logger.ApplicationLogger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -29,8 +28,7 @@ class RedirectController @Inject() (
   messagesControllerComponents: MessagesControllerComponents
 )(implicit val ec: ExecutionContext)
     extends FrontendController(messagesControllerComponents)
-    with I18nSupport
-    with ApplicationLogger {
+    with I18nSupport {
 
   def redirect(): Action[AnyContent] = Action {
     Redirect(routes.CreateTestUserController.onPageLoad())

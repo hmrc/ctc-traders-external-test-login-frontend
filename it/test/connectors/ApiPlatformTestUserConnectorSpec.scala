@@ -16,12 +16,12 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import helpers.{ItSpecBase, WireMockServerHandler}
-import models._
+import models.*
 import org.scalatest.Assertion
 import play.api.http.HeaderNames.{AUTHORIZATION, LOCATION}
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
@@ -125,7 +125,28 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase with WireMockServerHan
       result mustBe AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
     }
 
-    "fail with LoginFailed when the credentials are not valid" in {
+    "should fail when expected headers are missing" in {
+      val gatewayToken  = "GG_TOKEN"
+      val affinityGroup = "Individual"
+
+      server.stubFor(
+        post(urlEqualTo("/session"))
+          .withRequestBody(equalToJson(loginPayload))
+          .willReturn(
+            aResponse()
+              .withStatus(CREATED)
+              .withBody(Json.obj("gatewayToken" -> gatewayToken, "affinityGroup" -> affinityGroup).toString())
+          )
+      )
+
+      val result = connector.authenticate(login)
+
+      whenReady[Throwable, Assertion](result.failed) {
+        _ mustBe a[RuntimeException]
+      }
+    }
+
+    "should fail with LoginFailed when the credentials are not valid" in {
       server.stubFor(
         post(urlEqualTo("/session"))
           .withRequestBody(equalToJson(toJson(login).toString()))
@@ -142,7 +163,7 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase with WireMockServerHan
       }
     }
 
-    "fail when the authenticate call returns an error" in {
+    "should fail when the authenticate call returns an error" in {
       server.stubFor(
         post(urlEqualTo("/session"))
           .withRequestBody(equalToJson(loginPayload))

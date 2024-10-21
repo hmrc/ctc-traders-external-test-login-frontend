@@ -14,10 +14,20 @@
  * limitations under the License.
  *@
 
-@(key: String, label: String, value: String)
+@import uk.gov.hmrc.govukfrontend.views.html.components.{ErrorSummary => HmrcErrorSummary}
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-<div>
-  <p class="govuk-body form-label-bold" id="@key.toLowerCase-label"><b>@label</b></p>
-  <p class="govuk-body govuk-body--word-wrap" data-@key.toLowerCase>@value</p>
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-</div>
+@this(
+    govUkErrorSummary: GovukErrorSummary
+)
+
+@(errors: Seq[FormError])(implicit messages: Messages)
+
+@if(errors.nonEmpty) {
+    @govUkErrorSummary(
+        HmrcErrorSummary(
+            errorList = errors.asTextErrorLinks,
+            title = Text(messages("error.summary.title"))
+        )
+    )
+}

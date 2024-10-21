@@ -15,19 +15,18 @@
  *@
 
 @import models.TestUser
-@import views.html.{field, govuk_wrapper}
-@import views.html.govuk_wrapper
-@import views.html.includes
+@import views.html.components.{Button => MyButton, Field}
 
 @this(
     govUkWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
-    button: includes.Button
+    button: MyButton,
+    field: Field
 )
 
 @(user: TestUser)(implicit request: Request[_], messages: Messages)
 
-@govUkWrapper(pageTitle = Some(messages("testUser.title"))) {
+@govUkWrapper(pageTitle = Some(titleNoForm(messages("testUser.title")))) {
 
     @formHelper(action = routes.TestUserController.onSubmit(), Symbol("autoComplete") -> "off") {
         <h1 class="govuk-heading-xl">@messages("testUser.heading")</h1>

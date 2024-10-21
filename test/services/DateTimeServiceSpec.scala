@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-package logger
+package services
 
-import play.api.Logger
+import base.SpecBase
 
-trait ApplicationLogger {
-  protected val logger: Logger = Logger("application")
+class DateTimeServiceSpec extends SpecBase {
+
+  private val service: DateTimeService = new DateTimeService()
+
+  "DateTimeService" - {
+    "now" - {
+      "must return current instant" in {
+        val instant1 = service.now
+        val instant2 = service.now
+
+        instant2.isAfter(instant1).mustBe(true)
+      }
+    }
+  }
 }

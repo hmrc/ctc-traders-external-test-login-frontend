@@ -16,7 +16,6 @@
 
 package controllers
 
-import logger.ApplicationLogger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -31,8 +30,7 @@ class CreateTestUserController @Inject() (
   view: CreateTestUserView
 )(implicit val ec: ExecutionContext)
     extends FrontendController(messagesControllerComponents)
-    with I18nSupport
-    with ApplicationLogger {
+    with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = Action {
     implicit request =>

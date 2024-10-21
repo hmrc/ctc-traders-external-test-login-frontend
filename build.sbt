@@ -26,15 +26,19 @@ lazy val microservice = (project in file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.config._",
+      "views.html.templates._",
       "views.ViewUtils._",
-      "controllers.routes._"
+      "controllers.routes"
     ),
     PlayKeys.playDefaultPort := 19154,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration",
-    ScoverageKeys.coverageExcludedPackages := ".*views.html.components.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 65,
+    ScoverageKeys.coverageExcludedPackages := Seq(
+      ".*views.html.components.*",
+      ".*views.html.templates.*"
+    ).mkString(";"),
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting  := true,
     scalacOptions ++= Seq(
