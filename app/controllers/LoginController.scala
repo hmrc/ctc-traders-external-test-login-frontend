@@ -27,6 +27,7 @@ import views.html.LoginView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class LoginController @Inject() (
@@ -54,7 +55,7 @@ class LoginController @Inject() (
             loginService.authenticate(login) map {
               session => Redirect(appConfig.continueUrl).withSession(session)
             } recover {
-              case _: LoginFailedException =>
+              case NonFatal(_: LoginFailedException) =>
                 Unauthorized(view(boundForm.withError(FormError("value", "login.error.invalid"))))
             }
         )
