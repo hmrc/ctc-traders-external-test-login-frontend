@@ -28,7 +28,7 @@ class DateTimeServiceSpec extends SpecBase {
         val instant1 = service.now
         val instant2 = service.now
 
-        instant2.isAfter(instant1).mustBe(true)
+        instant2.isAfter(instant1).mustEqual(true)
       }
     }
   }

@@ -39,7 +39,7 @@ class AuthenticationResponseSpec extends SpecBase with ScalaCheckPropertyChecks 
 
               val result         = json.validate[AuthenticationResponse]
               val expectedResult = AuthenticationResponse(gatewayToken, affinityGroup)
-              result.get.mustBe(expectedResult)
+              result.get.mustEqual(expectedResult)
           }
         }
       }

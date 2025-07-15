@@ -30,7 +30,7 @@ class LoginSpec extends SpecBase with ScalaCheckPropertyChecks {
         (userId, password) =>
           val login  = Login(userId, password)
           val result = Json.toJson(login)
-          result mustBe Json.parse(s"""
+          result mustEqual Json.parse(s"""
               |{
               |  "username" : "$userId",
               |  "password" : "$password"

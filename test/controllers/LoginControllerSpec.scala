@@ -84,7 +84,7 @@ class LoginControllerSpec extends SpecBase {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustBe frontendAppConfig.continueUrl
+      redirectLocation(result).value mustEqual frontendAppConfig.continueUrl
 
       verify(mockLoginService).authenticate(eqTo(Login(userId, password)))(any(), any())
     }

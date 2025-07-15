@@ -39,7 +39,7 @@ class TestUserSpec extends SpecBase with ScalaCheckPropertyChecks {
 
               val result         = json.validate[TestUser]
               val expectedResult = TestUser(userId, password)
-              result.get.mustBe(expectedResult)
+              result.get.mustEqual(expectedResult)
           }
         }
       }
