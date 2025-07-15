@@ -32,8 +32,8 @@ class LoginFormProviderSpec extends SpecBase with ScalaCheckPropertyChecks {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (userId, password) =>
           val result = form.bind(Map("userId" -> userId, "password" -> password))
-          result("userId").value.value mustBe userId
-          result("password").value.value mustBe password
+          result("userId").value.value mustEqual userId
+          result("password").value.value mustEqual password
       }
     }
 

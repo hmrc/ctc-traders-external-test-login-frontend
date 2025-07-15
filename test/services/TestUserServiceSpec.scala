@@ -56,7 +56,7 @@ class TestUserServiceSpec extends SpecBase {
 
         val result = service.createUser(enrolments)
 
-        result.futureValue mustBe organisation
+        result.futureValue mustEqual organisation
 
         verify(mockApiPlatformTestUserConnector).createTestUser(eqTo(enrolments))(any())
       }

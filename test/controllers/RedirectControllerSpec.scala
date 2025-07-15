@@ -33,7 +33,7 @@ class RedirectControllerSpec extends SpecBase {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustBe routes.CreateTestUserController.onPageLoad().url
+      redirectLocation(result).value mustEqual routes.CreateTestUserController.onPageLoad().url
     }
   }
 }

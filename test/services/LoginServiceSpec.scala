@@ -86,7 +86,7 @@ class LoginServiceSpec extends SpecBase {
 
       val result = service.authenticate(login)
 
-      result.futureValue mustBe Session(
+      result.futureValue mustEqual Session(
         Map(
           "sessionId" -> s"session-$uuid",
           "authToken" -> authBearerToken,

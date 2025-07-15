@@ -80,8 +80,8 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase with WireMockServerHan
 
       val result = connector.createTestUser(Seq("national-insurance", "self-assessment", "mtd-income-tax")).futureValue
 
-      result.userId mustBe userId
-      result.password mustBe password
+      result.userId mustEqual userId
+      result.password mustEqual password
     }
 
     "fail when api-platform-test-user returns a response that is not 201 CREATED" in {
@@ -122,7 +122,7 @@ class ApiPlatformTestUserConnectorSpec extends ItSpecBase with WireMockServerHan
 
       val result = connector.authenticate(login).futureValue
 
-      result mustBe AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
+      result mustEqual AuthenticatedSession(authBearerToken, userOid, gatewayToken, affinityGroup)
     }
 
     "should fail when expected headers are missing" in {
