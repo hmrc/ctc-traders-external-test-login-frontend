@@ -31,7 +31,7 @@
     Input(
         id = id,
         errorMessage = field.error.map { e =>
-            ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
+            ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args*)))
         },
         spellcheck = Some(false),
         classes = "govuk-!-width-one-half",

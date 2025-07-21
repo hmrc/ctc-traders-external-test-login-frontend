@@ -22,7 +22,7 @@
     button: MyButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[?], messages: Messages)
 
 @govUkWrapper(pageTitle = Some(titleNoForm(messages("createTestUser.title")))) {
 

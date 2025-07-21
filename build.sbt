@@ -5,13 +5,13 @@ import uk.gov.hmrc.DefaultBuildSettings
 
 lazy val appName: String = "ctc-traders-external-test-login-frontend"
 
-ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.5.0"
+ThisBuild / majorVersion      := 0
+ThisBuild / scalaVersion      := "3.5.0"
 ThisBuild / scalafmtOnCompile := true
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
-  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(ThisBuild / useSuperShell := false)
   .settings(
     name := appName,
@@ -39,18 +39,19 @@ lazy val microservice = (project in file("."))
       ".*views.html.templates.*"
     ).mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 90,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting  := true,
+    ScoverageKeys.coverageFailOnMinimum    := true,
+    ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq(
       "-feature",
       "-language:implicitConversions",
       "-language:postfixOps",
       "-language:higherKinds",
       "-Wconf:src=routes/.*:s",
-      "-Wconf:src=html/.*:s",
+      "-Wconf:src=html/.*&msg=unused import:s",
+      "-Wconf:msg=Flag .* set repeatedly:s"
     ),
     libraryDependencies ++= AppDependencies(),
-    retrieveManaged := true,
+    retrieveManaged         := true,
     Assets / pipelineStages := Seq(digest)
   )
 
