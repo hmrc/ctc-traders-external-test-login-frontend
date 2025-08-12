@@ -19,10 +19,8 @@ package services
 import base.SpecBase
 import connectors.ApiPlatformTestUserConnector
 import models.TestUser
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.Future.successful
 
@@ -31,13 +29,6 @@ class TestUserServiceSpec extends SpecBase {
   private lazy val mockApiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
   private val enrolments = Seq("common-transit-convention-traders")
-
-  override protected def applicationBuilder(): GuiceApplicationBuilder =
-    super
-      .applicationBuilder()
-      .overrides(
-        bind[ApiPlatformTestUserConnector].toInstance(mockApiPlatformTestUserConnector)
-      )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -52,7 +43,7 @@ class TestUserServiceSpec extends SpecBase {
 
         when(mockApiPlatformTestUserConnector.createTestUser(any())(any())).thenReturn(successful(organisation))
 
-        val service = app.injector.instanceOf[TestUserService]
+        val service = new TestUserService(mockApiPlatformTestUserConnector)
 
         val result = service.createUser(enrolments)
 

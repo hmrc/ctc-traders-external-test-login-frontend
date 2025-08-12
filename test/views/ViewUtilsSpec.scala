@@ -16,12 +16,12 @@
 
 package views
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.LoginFormProvider
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class ViewUtilsSpec extends SpecBase with ScalaCheckPropertyChecks {
+class ViewUtilsSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks {
 
   "ViewUtils" - {
     "title" - {

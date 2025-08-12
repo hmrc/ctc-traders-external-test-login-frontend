@@ -16,20 +16,20 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import models.TestUser
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.TestUserService
 import views.html.TestUserView
 
 import scala.concurrent.Future
 
-class TestUserControllerSpec extends SpecBase {
+class TestUserControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   private val testUser = TestUser("userId", "password")
 
