@@ -16,38 +16,14 @@
 
 package base
 
-import config.FrontendAppConfig
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait SpecBase
-    extends AnyFreeSpec
-    with Matchers
-    with TryValues
-    with OptionValues
-    with ScalaFutures
-    with MockitoSugar
-    with IntegrationPatience
-    with GuiceOneAppPerSuite
-    with BeforeAndAfterEach {
-
-  implicit def messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
-
-  def frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
-  protected def applicationBuilder(): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-
-  override def fakeApplication(): Application = applicationBuilder().build()
+trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 }

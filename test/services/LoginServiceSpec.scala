@@ -22,8 +22,6 @@ import models.{AuthenticatedSession, Login, LoginFailedException}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.Assertion
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Session
 
 import java.time.Instant
@@ -47,15 +45,6 @@ class LoginServiceSpec extends SpecBase {
   private lazy val mockUUIDService: UUIDService                                   = mock[UUIDService]
   private lazy val mockDateTimeService: DateTimeService                           = mock[DateTimeService]
 
-  override protected def applicationBuilder(): GuiceApplicationBuilder =
-    super
-      .applicationBuilder()
-      .overrides(
-        bind[ApiPlatformTestUserConnector].toInstance(mockApiPlatformTestUserConnector),
-        bind[UUIDService].toInstance(mockUUIDService),
-        bind[DateTimeService].toInstance(mockDateTimeService)
-      )
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockApiPlatformTestUserConnector)
@@ -68,7 +57,7 @@ class LoginServiceSpec extends SpecBase {
     "must propagate LoginFailed exception when authentication fails" in {
       when(mockApiPlatformTestUserConnector.authenticate(any())(any())).thenReturn(Future.failed(LoginFailedException(userId)))
 
-      val service = app.injector.instanceOf[LoginService]
+      val service = new LoginService(mockApiPlatformTestUserConnector, mockUUIDService, mockDateTimeService)
 
       val result = service.authenticate(login)
 
@@ -82,7 +71,7 @@ class LoginServiceSpec extends SpecBase {
       when(mockDateTimeService.now).thenReturn(dateTime)
       when(mockApiPlatformTestUserConnector.authenticate(any())(any())).thenReturn(Future.successful(authenticatedSession))
 
-      val service = app.injector.instanceOf[LoginService]
+      val service = new LoginService(mockApiPlatformTestUserConnector, mockUUIDService, mockDateTimeService)
 
       val result = service.authenticate(login)
 

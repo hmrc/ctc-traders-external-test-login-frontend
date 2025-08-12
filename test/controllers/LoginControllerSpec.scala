@@ -16,23 +16,23 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.LoginFormProvider
 import models.{Login, LoginFailedException}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.LoginService
 import views.html.LoginView
 
 import scala.concurrent.Future
 
-class LoginControllerSpec extends SpecBase {
+class LoginControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   private val formProvider = new LoginFormProvider()
   private val form         = formProvider()

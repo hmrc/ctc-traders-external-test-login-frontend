@@ -16,12 +16,12 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.CreateTestUserView
 
-class CreateTestUserControllerSpec extends SpecBase {
+class CreateTestUserControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   private lazy val createTestUserRoute = routes.CreateTestUserController.onPageLoad().url
 
